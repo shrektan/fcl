@@ -131,7 +131,7 @@ jobs:
     needs: R-CMD-check
     runs-on: ubuntu-18.04
     # only runs on tags
-    if: ${{ matrix.config.os }} == "ubuntu-18.04" && startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/')
     # Do not run this on pull request
     # if: startsWith(github.ref, 'refs/tags/')
     steps:
