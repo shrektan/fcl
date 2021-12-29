@@ -137,6 +137,9 @@ jobs:
     steps:
       # - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
+        with:
+          name: pkgbin
+          path: pkgbin
       # - name: Checksum
       #   run: |
       #     cd pkgbin
@@ -145,4 +148,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            "./fcl/pkgbin/*"
+            "pkgbin/*"
