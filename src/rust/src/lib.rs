@@ -43,7 +43,6 @@ fn bond_result(
 ) -> Robj {
     let bond = bond::FixedBond::new(
         robj2date(value_date),
-        // NaiveDate::parse_from_str(value_date, "%Y-%m-%d").unwrap(),
         robj2date(mty_date),
         redem_value,
         cpn_rate,
