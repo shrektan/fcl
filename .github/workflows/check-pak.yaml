@@ -114,6 +114,13 @@ jobs:
           name: ${{ matrix.config.os }}-r${{ matrix.config.r }}-results
           path: check
 
+      - name: Build binaries
+        if: ${{ matrix.config.os }} == "ubuntu-18.04"
+        run: |
+          dir.create("./pkgbin")
+          pkgbuild::build(binary = TRUE, dest_path = "./pkgbin/")
+        shell: Rscript {0}
+
       - name: Upload pkgbin
         uses: actions/upload-artifact@main
         with:
@@ -124,17 +131,12 @@ jobs:
     needs: R-CMD-check
     runs-on: ubuntu-18.04
     # only runs on tags
-    if: startsWith(github.ref, 'refs/tags/')
+    if: ${{ matrix.config.os }} == "ubuntu-18.04" && startsWith(github.ref, 'refs/tags/')
     # Do not run this on pull request
     # if: startsWith(github.ref, 'refs/tags/')
     steps:
       # - uses: actions/checkout@v2
-      # - uses: actions/download-artifact@v2
-      - name: Build binaries
-        run: |
-          dir.create("./pkgbin")
-          pkgbuild::build(binary = TRUE, dest_path = "./pkgbin/")
-        shell: Rscript {0}
+      - uses: actions/download-artifact@v2
       # - name: Checksum
       #   run: |
       #     cd pkgbin
