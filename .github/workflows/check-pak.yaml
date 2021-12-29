@@ -85,7 +85,7 @@ jobs:
       - name: Install dependencies
         run: |
           pak::local_install_dev_deps(upgrade = TRUE)
-          pak::pkg_install("rcmdcheck")
+          pak::pkg_install(c("rcmdcheck", "pkgbuild"))
         shell: Rscript {0}
 
       - name: Session info
@@ -122,7 +122,7 @@ jobs:
       - name: Build binaries
         run: |
           dir.create("./pkgbin")
-          devtools::build(binary = TRUE, path = if (.Platform$OS.type == "windows") "./pkgbin/fcl.zip" else "./pkgbin/fcl.tgz")
+          pkgbuild::build(binary = TRUE, dest_path = if (.Platform$OS.type == "windows") "./pkgbin/fcl.zip" else "./pkgbin/fcl.tgz")
         shell: Rscript {0}
 
       - name: Upload pkgbin
