@@ -1,5 +1,5 @@
+use chrono::NaiveDate;
 use extendr_api::prelude::*;
-use chrono::{NaiveDate};
 mod bond;
 
 fn robj2date(x: Robj) -> NaiveDate {
@@ -32,14 +32,22 @@ mod test {
 /// @return a double vector with 3 elements: ytm, macd and modd
 /// @export
 #[extendr]
-fn bond_result(value_date: Robj, mty_date: Robj, redem_value: f64, cpn_rate: f64, cpn_freq: u32, ref_date: Robj, clean_price: f64) -> Robj {
+fn bond_result(
+    value_date: Robj,
+    mty_date: Robj,
+    redem_value: f64,
+    cpn_rate: f64,
+    cpn_freq: u32,
+    ref_date: Robj,
+    clean_price: f64,
+) -> Robj {
     let bond = bond::FixedBond::new(
         robj2date(value_date),
         // NaiveDate::parse_from_str(value_date, "%Y-%m-%d").unwrap(),
         robj2date(mty_date),
         redem_value,
         cpn_rate,
-        cpn_freq
+        cpn_freq,
     );
     let ref_date = robj2date(ref_date);
     let out = bond.result(&ref_date, clean_price);

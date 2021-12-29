@@ -1,4 +1,4 @@
-use chrono::{Datelike, DateTime, NaiveDate, Utc};
+use chrono::{DateTime, Datelike, NaiveDate, Utc};
 use std::collections::BTreeMap;
 
 #[derive(Debug)]
@@ -54,9 +54,19 @@ impl Cashflow {
 }
 
 impl FixedBond {
-    pub fn new(value_date: NaiveDate, mty_date: NaiveDate, redem_value: f64, cpn_rate: f64, cpn_freq: u32) -> FixedBond {
+    pub fn new(
+        value_date: NaiveDate,
+        mty_date: NaiveDate,
+        redem_value: f64,
+        cpn_rate: f64,
+        cpn_freq: u32,
+    ) -> FixedBond {
         FixedBond {
-            value_date, mty_date, redem_value, cpn_rate, cpn_freq
+            value_date,
+            mty_date,
+            redem_value,
+            cpn_rate,
+            cpn_freq,
         }
     }
     fn years(d1: &NaiveDate, d0: &NaiveDate) -> f64 {
@@ -179,15 +189,18 @@ impl FixedBond {
         let npv0 = financial::xnpv(ytm - ytm_chg, &cf.1, &cf.0).unwrap();
         let modd = -(npv1 - npv0) / (2.0 * ytm_chg * dirty_price);
         let cf2 = self.cashflow().cf(ref_date, dirty_price);
-        let years : Vec<f64> = cf2.data.keys().map(|date : &NaiveDate| {
-            FixedBond::years(date, ref_date)
-        }).collect();
-        let macd = &years.iter().zip(&cf.1).map(|(t, cf)| {
-            cf * t * (1.0 + ytm).powf(-t)
-        }).sum() / dirty_price;
-        BondVal {
-            ytm, macd, modd
-        }
+        let years: Vec<f64> = cf2
+            .data
+            .keys()
+            .map(|date: &NaiveDate| FixedBond::years(date, ref_date))
+            .collect();
+        let macd = &years
+            .iter()
+            .zip(&cf.1)
+            .map(|(t, cf)| cf * t * (1.0 + ytm).powf(-t))
+            .sum()
+            / dirty_price;
+        BondVal { ytm, macd, modd }
     }
 }
 #[cfg(test)]
