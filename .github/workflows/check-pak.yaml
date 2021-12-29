@@ -118,7 +118,7 @@ jobs:
         if: ${{ matrix.config.os }} == "ubuntu-18.04"
         run: |
           dir.create("./pkgbin")
-          pkgbuild::build(binary = TRUE, dest_path = "./pkgbin/")
+          pkgbuild::build(binary = TRUE, dest_path = "./pkgbin")
         shell: Rscript {0}
 
       - name: Upload pkgbin
@@ -145,4 +145,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            "./pkgbin/*"
+            "./fcl/pkgbin/*"
