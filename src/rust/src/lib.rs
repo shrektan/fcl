@@ -1,4 +1,5 @@
 use extendr_api::prelude::*;
+mod bond;
 
 /// Return string `"Hello world!"` to R.
 /// @export
