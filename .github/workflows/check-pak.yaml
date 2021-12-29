@@ -169,8 +169,10 @@ jobs:
   release:
     needs: R-CMD-check
     runs-on: ubuntu-18.04
+    # only runs on master
+    if: github.ref == 'refs/heads/master'
     # Do not run this on pull request
-    if: startsWith(github.ref, 'refs/tags/')
+    # if: startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/checkout@v2
 
