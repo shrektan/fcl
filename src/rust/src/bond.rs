@@ -12,6 +12,13 @@ pub struct FixedBond {
 }
 
 #[derive(Debug)]
+pub struct BondVal {
+    ytm: f64,
+    macd: f64,
+    modd: f64,
+}
+
+#[derive(Debug)]
 struct Cashflow {
     data: BTreeMap<NaiveDate, f64>,
 }
@@ -159,16 +166,7 @@ impl FixedBond {
         }
         res
     }
-    pub fn ytm(&self, ref_date: &NaiveDate, clean_price: f64) -> f64 {
-        // dbg!(self.cashflow());
-        let dirty_price = self.dirty_price(ref_date, clean_price);
-        let cf = self.cashflow().cf(ref_date, dirty_price).xirr_cf();
-        // dbg!(&cf);
-        financial::xirr(&cf.1, &cf.0, None).unwrap()
-    }
-    /// Calculate the Duration of the Bond
-    /// The first result is the mac dur and the 2nd is the mod dur
-    pub fn dur(&self, ref_date : &NaiveDate, clean_price : f64) -> (f64, f64) {
+    pub fn result(&self, ref_date: &NaiveDate, clean_price: f64) -> BondVal {
         let dirty_price = self.dirty_price(ref_date, clean_price);
         let cf = self.cashflow().cf(ref_date, dirty_price).xirr_cf();
         let ytm = financial::xirr(&cf.1, &cf.0, None).unwrap();
@@ -183,7 +181,9 @@ impl FixedBond {
         let macd = &years.iter().zip(&cf.1).map(|(t, cf)| {
             cf * t * (1.0 + ytm).powf(-t)
         }).sum() / dirty_price;
-        (modd, macd)
+        BondVal {
+            ytm, macd, modd
+        }
     }
 }
 #[cfg(test)]
@@ -246,13 +246,13 @@ mod tests {
         };
         let ytm = 0.05;
         let ref_date = NaiveDate::from_ymd(2010, 1, 1);
-        assert_eq!(rnd(bond.ytm(&ref_date, 100.0)), ytm);
+        assert_eq!(rnd(bond.result(&ref_date, 100.0).ytm), ytm);
         // won't change as the price is clean
         let ref_date = NaiveDate::from_ymd(2011, 1, 1);
-        assert_eq!(rnd(bond.ytm(&ref_date, 100.0)), ytm);
+        assert_eq!(rnd(bond.result(&ref_date, 100.0).ytm), ytm);
         // won't change as the price is clean
         let ref_date = NaiveDate::from_ymd(2011, 6, 15);
-        assert_eq!(rnd(bond.ytm(&ref_date, 100.0)), ytm);
+        assert_eq!(rnd(bond.result(&ref_date, 100.0).ytm), ytm);
     }
     #[test]
     fn zero_cpn_bond() {
@@ -265,7 +265,7 @@ mod tests {
         };
         let ytm = 0.050000000000000114;
         let ref_date = NaiveDate::from_ymd(2010, 1, 1);
-        assert_eq!(bond.ytm(&ref_date, 100.0), ytm);
+        assert_eq!(bond.result(&ref_date, 100.0).ytm, ytm);
     }
     #[test]
     fn dur() {
@@ -277,11 +277,11 @@ mod tests {
             cpn_freq: 0,
         };
         let ref_date = NaiveDate::from_ymd(2010, 1, 1);
-        assert_eq!(rnd2(bond.dur(&ref_date, 100.0).1), 5.0);
+        assert_eq!(rnd2(bond.result(&ref_date, 100.0).macd), 5.0);
         let ref_date = NaiveDate::from_ymd(2011, 1, 1);
-        assert_eq!(rnd2(bond.dur(&ref_date, 100.0).1), 4.0);
+        assert_eq!(rnd2(bond.result(&ref_date, 100.0).macd), 4.0);
         let ref_date = NaiveDate::from_ymd(2010, 7, 1);
-        assert_eq!(rnd2(bond.dur(&ref_date, 100.0).1), 4.5);
+        assert_eq!(rnd2(bond.result(&ref_date, 100.0).macd), 4.5);
 
         let bond = FixedBond {
             value_date: NaiveDate::from_ymd(2010, 1, 1),
@@ -291,9 +291,8 @@ mod tests {
             cpn_freq: 1,
         };
         let ref_date = NaiveDate::from_ymd(2010, 1, 1);
-        let ytm = bond.ytm(&ref_date, 100.0);
-        let dur = bond.dur(&ref_date, 100.0);
-        assert_eq!(rnd2(dur.1 / (1.0 + ytm)), rnd2(dur.0));
+        let res = bond.result(&ref_date, 100.0);
+        assert_eq!(rnd2(res.macd / (1.0 + res.ytm)), rnd2(res.modd));
     }
     #[test]
     #[should_panic]
