@@ -119,12 +119,6 @@ jobs:
           name: ${{ matrix.config.os }}-r${{ matrix.config.r }}-results
           path: check
 
-      - name: Build binaries
-        run: |
-          dir.create("./pkgbin")
-          pkgbuild::build(binary = TRUE, dest_path = if (.Platform$OS.type == "windows") "./pkgbin/fcl.zip" else "./pkgbin/fcl.tgz")
-        shell: Rscript {0}
-
       - name: Upload pkgbin
         uses: actions/upload-artifact@main
         with:
@@ -139,14 +133,20 @@ jobs:
     # Do not run this on pull request
     # if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-      - name: Checksum
+      # - uses: actions/checkout@v2
+      # - uses: actions/download-artifact@v2
+      - name: Build binaries
         run: |
-          cd pkgbin
-          sha256sum * > sha256sums.txt
+          dir.create("./pkgbin")
+          pkgbuild::build(binary = TRUE, dest_path = "./pkgbin/fcl.tgz")
+        shell: Rscript {0}
+      # - name: Checksum
+      #   run: |
+      #     cd pkgbin
+      #     sha256sum * > sha256sums.txt
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: 'pkgbin/*'
+          files: |
+            "./pkgbin/fcl.tgz"
