@@ -9,6 +9,6 @@ edition = '2021'
 crate-type = [ 'staticlib' ]
 
 [dependencies]
-extendr-api = '*'
-financial="*"
-chrono="*"
+extendr-api = '0.2.0'
+financial="1.1.3"
+chrono="0.4.19"

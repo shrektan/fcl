@@ -1,5 +1,4 @@
-use chrono::Datelike;
-use chrono::{DateTime, NaiveDate, Utc};
+use chrono::{Datelike, DateTime, NaiveDate, Utc};
 use std::collections::BTreeMap;
 
 #[derive(Debug)]
@@ -13,9 +12,9 @@ pub struct FixedBond {
 
 #[derive(Debug)]
 pub struct BondVal {
-    ytm: f64,
-    macd: f64,
-    modd: f64,
+    pub ytm: f64,
+    pub macd: f64,
+    pub modd: f64,
 }
 
 #[derive(Debug)]
@@ -55,6 +54,11 @@ impl Cashflow {
 }
 
 impl FixedBond {
+    pub fn new(value_date: NaiveDate, mty_date: NaiveDate, redem_value: f64, cpn_rate: f64, cpn_freq: u32) -> FixedBond {
+        FixedBond {
+            value_date, mty_date, redem_value, cpn_rate, cpn_freq
+        }
+    }
     fn years(d1: &NaiveDate, d0: &NaiveDate) -> f64 {
         (d1.year() - d0.year()) as f64
         // must be as f64 first, otherwise u32 - u32 may overflow (when negative)
@@ -204,13 +208,13 @@ mod tests {
     }
     #[test]
     fn dirty_price() {
-        let mut bond = FixedBond {
-            value_date: NaiveDate::from_ymd(2010, 1, 1),
-            mty_date: NaiveDate::from_ymd(2015, 1, 1),
-            redem_value: 100.0,
-            cpn_rate: 0.05,
-            cpn_freq: 2,
-        };
+        let mut bond = FixedBond::new(
+            NaiveDate::from_ymd(2010, 1, 1),
+            NaiveDate::from_ymd(2015, 1, 1),
+            100.0,
+            0.05,
+            2,
+        );
         let ref_date = NaiveDate::from_ymd(2010, 1, 1);
         assert_eq!(bond.accrued(&ref_date), 0.0);
         let ref_date = NaiveDate::from_ymd(2011, 7, 1);
