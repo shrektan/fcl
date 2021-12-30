@@ -86,10 +86,18 @@ fn bond_result(
                 cpn_freq[i] as u32,
             );
             let ref_date = ref_date[i].unwrap();
-            let out = bond.result(&ref_date, clean_price[i]);
-            ytm.push(Some(out.ytm));
-            macd.push(Some(out.macd));
-            modd.push(Some(out.modd));
+            match bond.result(&ref_date, clean_price[i]) {
+                Some(out) => {
+                    ytm.push(Some(out.ytm));
+                    macd.push(Some(out.macd));
+                    modd.push(Some(out.modd));
+                },
+                None => {
+                    ytm.push(None);
+                    macd.push(None);
+                    modd.push(None);
+                }
+            }
         }
     }
     data_frame!(ytm = ytm, macd = macd, modd = modd)
