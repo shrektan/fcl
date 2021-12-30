@@ -97,11 +97,11 @@ impl FixedBond {
             if day > max_day { max_day } else { day },
         )
     }
-    fn cpn_dates(&self) -> Vec<NaiveDate> {
+    fn cpn_dates(&self, adjust: bool) -> Vec<NaiveDate> {
         let mut dates: Vec<NaiveDate> = vec![self.value_date];
         let mut ref_date = self.value_date;
         loop {
-            match self.nxt_cpn_date(&ref_date) {
+            match self.nxt_cpn_date(&ref_date, adjust) {
                 Some(date) => {
                     ref_date = date;
                     dates.push(date);
@@ -111,8 +111,10 @@ impl FixedBond {
         }
         dates
     }
-    fn nxt_cpn_date(&self, ref_date: &NaiveDate) -> Option<NaiveDate> {
-        if ref_date == &self.mty_date {
+    /// Calculate the Next Coupon Date
+    /// @param adjust when true, it unadjust the last coupon date to mty date, if it's beyond
+    fn nxt_cpn_date(&self, ref_date: &NaiveDate, adjust: bool) -> Option<NaiveDate> {
+        if ref_date >= &self.mty_date {
             return None;
         }
         let res = match self.cpn_freq {
@@ -125,8 +127,8 @@ impl FixedBond {
         };
         match res {
             Some(date) => {
-                if date > self.mty_date {
-                    None
+                if date > self.mty_date && adjust {
+                    Some(self.mty_date)
                 } else {
                     Some(date)
                 }
@@ -145,29 +147,37 @@ impl FixedBond {
         };
         self.redem_value * self.cpn_rate * factor
     }
-    fn accrued(&self, ref_date: &NaiveDate) -> f64 {
-        if ref_date >= &self.mty_date || ref_date <= &self.value_date {
+    /// Calculate the accrued coupon
+    /// @param eop, if true, at the coupon / mty date it returns 0 otherwise returns the paying coupon
+    fn accrued(&self, ref_date: &NaiveDate, eop: bool) -> f64 {
+        if ref_date > &self.mty_date || ref_date <= &self.value_date {
             return 0.0;
         }
-        let cpn_dates = self.cpn_dates();
+        if eop && ref_date == &self.mty_date {
+            return 0.0;
+        }
+        let cpn_dates = self.cpn_dates(false);
+        let calculate = |i: usize| {
+            // dbg!(&cpn_dates); dbg!(&ref_date); dbg!(i);
+            let last_cpn_date = cpn_dates[i - 1];
+            let nxt_cpn_date = cpn_dates[i];
+            let cpn_days = nxt_cpn_date.signed_duration_since(last_cpn_date).num_days();
+            let days = ref_date.signed_duration_since(last_cpn_date).num_days();
+            // dbg!(cpn_days); dbg!(days);
+            self.cpn_value() / cpn_days as f64 * days as f64
+        };
+
         match cpn_dates.binary_search(&ref_date) {
-            Ok(_) => 0.0, // when ok, it means it's one of the cpn date and the coupon has been paid then should be zero
-            Err(i) => {
-                // dbg!(&cpn_dates); dbg!(&ref_date); dbg!(i);
-                let last_cpn_date = cpn_dates[i - 1];
-                let nxt_cpn_date = cpn_dates[i];
-                let cpn_days = nxt_cpn_date.signed_duration_since(last_cpn_date).num_days();
-                let days = ref_date.signed_duration_since(last_cpn_date).num_days();
-                // dbg!(cpn_days); dbg!(days);
-                self.cpn_value() / cpn_days as f64 * days as f64
-            }
+            // when ok, it means it's one of the cpn date and the coupon has been paid then should be zero
+            Ok(i) => if eop { 0.0 } else { calculate(i) },
+            Err(i) => calculate(i),
         }
     }
     fn dirty_price(&self, ref_date: &NaiveDate, clean_price: f64) -> f64 {
-        clean_price + self.accrued(ref_date)
+        clean_price + self.accrued(ref_date, true)
     }
     fn cashflow(&self) -> Cashflow {
-        let mut ref_date = self.nxt_cpn_date(&self.value_date);
+        let mut ref_date = self.nxt_cpn_date(&self.value_date, true);
         let mut res: Cashflow = Cashflow::new();
         loop {
             match ref_date {
@@ -176,9 +186,9 @@ impl FixedBond {
                         self.redem_value
                     } else {
                         0.0
-                    } + self.cpn_value();
+                    } + self.accrued(&date, false);
                     res.data.insert(date, value);
-                    ref_date = self.nxt_cpn_date(&date);
+                    ref_date = self.nxt_cpn_date(&date, true);
                 }
                 None => break,
             }
@@ -234,15 +244,16 @@ mod tests {
             2,
         );
         let ref_date = NaiveDate::from_ymd(2010, 1, 1);
-        assert_eq!(bond.accrued(&ref_date), 0.0);
+        assert_eq!(bond.accrued(&ref_date, true), 0.0);
         let ref_date = NaiveDate::from_ymd(2011, 7, 1);
         assert_eq!(bond.dirty_price(&ref_date, 100.0), 100.0);
         let ref_date = NaiveDate::from_ymd(2011, 1, 1);
         assert_eq!(bond.dirty_price(&ref_date, 100.0), 100.0);
+        assert_eq!(bond.accrued(&ref_date, false), 2.5);
 
         bond.cpn_freq = 1;
         let ref_date = NaiveDate::from_ymd(2010, 2, 1);
-        assert_eq!(bond.accrued(&ref_date), 31.0 / 365.0 * 5.0);
+        assert_eq!(bond.accrued(&ref_date, true), 31.0 / 365.0 * 5.0);
 
         let bond = FixedBond {
             value_date: NaiveDate::from_ymd(2010, 1, 1),
@@ -253,7 +264,7 @@ mod tests {
         };
         let ref_date = NaiveDate::from_ymd(2010, 2, 1);
         assert_eq!(
-            bond.accrued(&ref_date),
+            bond.accrued(&ref_date, true),
             31.0 / (365.0 + 365.0) * (5.0 * 2.0)
         );
     }
@@ -288,6 +299,21 @@ mod tests {
         let ytm = 0.050000000000000114;
         let ref_date = NaiveDate::from_ymd(2010, 1, 1);
         assert_eq!(bond.result(&ref_date, 100.0).ytm, ytm);
+    }
+    #[test]
+    fn cashflow() {
+        let bond = FixedBond {
+            value_date: NaiveDate::from_ymd(2010, 1, 1),
+            mty_date: NaiveDate::from_ymd(2010, 8, 1),
+            redem_value: 100.0,
+            cpn_rate: 0.05,
+            cpn_freq: 2,
+        };
+        let out = bond.cashflow().data;
+        let mut expect: BTreeMap<NaiveDate, f64> = BTreeMap::new();
+        expect.insert(NaiveDate::from_ymd(2010, 7, 1), 2.5);
+        expect.insert(NaiveDate::from_ymd(2010, 8, 1), 100.0 + 5.0 * 0.5 * 31.0 / 184.0);
+        assert_eq!(out, expect);
     }
     #[test]
     fn dur() {
