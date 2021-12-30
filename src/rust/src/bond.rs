@@ -77,11 +77,16 @@ impl FixedBond {
     }
     fn add_months(ref_date: &NaiveDate, months: u32) -> NaiveDate {
         let num_of_months = ref_date.year() * 12 + ref_date.month() as i32 + months as i32;
-        let year = num_of_months / 12;
-        let month = num_of_months % 12;
+        let year = (num_of_months - 1) / 12;
+        let month = (num_of_months - 1) % 12 + 1;
         let since = NaiveDate::signed_duration_since;
+        let nxt_month = if month == 12 {
+            NaiveDate::from_ymd(year + 1, 1 as u32, 1)
+        } else {
+            NaiveDate::from_ymd(year, (month + 1) as u32, 1)
+        };
         let max_day = since(
-            NaiveDate::from_ymd(year, (month + 1) as u32, 1),
+            nxt_month,
             NaiveDate::from_ymd(year, month as u32, 1),
         )
         .num_days() as u32;
@@ -311,6 +316,16 @@ mod tests {
         let res = bond.result(&ref_date, 100.0);
         assert_eq!(rnd2(res.macd / (1.0 + res.ytm)), rnd2(res.modd));
     }
+    #[test]
+    fn add_months() {
+        let ref_date = NaiveDate::from_ymd(2020, 12, 31);
+        assert_eq!(FixedBond::add_months(&ref_date, 0), ref_date);
+        assert_eq!(FixedBond::add_months(&ref_date, 1), NaiveDate::from_ymd(2021, 1, 31));
+        assert_eq!(FixedBond::add_months(&ref_date, 2), NaiveDate::from_ymd(2021, 2, 28));
+        assert_eq!(FixedBond::add_months(&ref_date, 11), NaiveDate::from_ymd(2021, 11, 30));
+        assert_eq!(FixedBond::add_months(&ref_date, 12), NaiveDate::from_ymd(2021, 12, 31));
+    }
+
     #[test]
     #[should_panic]
     fn panic_when_invalid_freq() {
