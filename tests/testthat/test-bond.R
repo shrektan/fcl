@@ -12,5 +12,12 @@ test_that("bond works", {
   expect_equal(out, expect)
 
   out <- bond_result(ymd("2021-01-01", "2021-02-01"), ymd("2025-01-01", "2030-02-01"), c(100.0, NA), c(0.05, 0.03), c(0L, 1L), ymd("2022-01-01", "2022-02-01"), c(100, 100))
-  expect_equal(as.double(out[2, ]), c(NA_real_, NA_real_, NA_real_))
+  na_out <- c(NA_real_, NA_real_, NA_real_)
+  expect_equal(as.double(out[2, ]), na_out)
+  expect_equal(
+    as.double(bond_result(ymd("2021-01-01"), ymd("2020-01-01"), 100.0, 0.05, 1L, ymd("2020-01-01"), 100.0)), na_out
+  )
+  expect_equal(
+    as.double(bond_result(ymd("2018-01-01"), ymd("2020-01-01"), 100.0, 0.05, 1L, ymd("2022-01-01"), 100.0)), na_out
+  )
 })
