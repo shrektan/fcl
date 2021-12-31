@@ -205,22 +205,27 @@ impl FixedBond {
             return None; // otherwise xirr will throw
         }
         let ytm = financial::xirr(&cf.1, &cf.0, None).ok()?;
-        let ytm_chg = 1e-6;
-        let npv1 = financial::xnpv(ytm + ytm_chg, &cf.1, &cf.0).ok()?;
-        let npv0 = financial::xnpv(ytm - ytm_chg, &cf.1, &cf.0).ok()?;
-        let modd = -(npv1 - npv0) / (2.0 * ytm_chg * dirty_price);
-        let cf2 = self.cashflow().cf(ref_date, dirty_price);
-        let years: Vec<f64> = cf2
-            .data
-            .keys()
-            .map(|date: &NaiveDate| FixedBond::years(date, ref_date))
-            .collect();
-        let macd = &years
-            .iter()
-            .zip(&cf.1)
-            .map(|(t, cf)| cf * t * (1.0 + ytm).powf(-t))
-            .sum()
-            / dirty_price;
+        let modd = {
+            let ytm_chg = 1e-6;
+            let npv1 = financial::xnpv(ytm + ytm_chg, &cf.1, &cf.0).ok()?;
+            let npv0 = financial::xnpv(ytm - ytm_chg, &cf.1, &cf.0).ok()?;
+            -(npv1 - npv0) / (2.0 * ytm_chg * dirty_price)
+        };
+        let macd = {
+            let cf2 = self.cashflow().cf(ref_date, dirty_price);
+            let years: Vec<f64> = cf2
+                .data
+                .keys()
+                .map(|date: &NaiveDate| FixedBond::years(date, ref_date))
+                .collect();
+            let macd = &years
+                .iter()
+                .zip(&cf.1)
+                .map(|(t, cf)| cf * t * (1.0 + ytm).powf(-t))
+                .sum()
+                / dirty_price;
+            macd
+        };
         Some(BondVal { ytm, macd, modd })
     }
 }
