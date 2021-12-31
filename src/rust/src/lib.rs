@@ -13,7 +13,8 @@ fn robj2date(x: Robj, var: &str) -> Vec<Option<NaiveDate>> {
             } else {
                 NaiveDate::from_num_days_from_ce_opt(d as i32 + 719163)
             }
-        }).collect()
+        })
+        .collect()
     }
 }
 
@@ -51,7 +52,13 @@ fn bond_result(
     let n = value_date.len();
     let check = |v: &Robj, var: &str| {
         if v.len() != n {
-            panic!("the length of {}({}) and {}({}) differs", "value_date", n, &var, v.len())
+            panic!(
+                "the length of {}({}) and {}({}) differs",
+                "value_date",
+                n,
+                &var,
+                v.len()
+            )
         }
     };
     check(&mty_date, "mty_date");
@@ -64,16 +71,27 @@ fn bond_result(
     let value_date = robj2date(value_date, "value_date");
     let mty_date = robj2date(mty_date, "mty_date");
     let ref_date = robj2date(ref_date, "ref_date");
-    let redem_value = redem_value.as_real_slice().expect("redem_value must be double");
+    let redem_value = redem_value
+        .as_real_slice()
+        .expect("redem_value must be double");
     let cpn_rate = cpn_rate.as_real_slice().expect("cpn_rate must be double");
-    let clean_price = clean_price.as_real_slice().expect("clean_price must be double");
+    let clean_price = clean_price
+        .as_real_slice()
+        .expect("clean_price must be double");
     let cpn_freq = cpn_freq.as_integer_slice().expect("cpn_freq must be int");
 
     let mut ytm: Vec<Option<f64>> = Vec::new();
     let mut macd: Vec<Option<f64>> = Vec::new();
     let mut modd: Vec<Option<f64>> = Vec::new();
     for i in 0..n {
-        if value_date[i] == None || mty_date[i] == None || ref_date[i] == None || redem_value[i].is_na() || cpn_rate[i].is_na() || clean_price[i].is_na() || cpn_freq[i].is_na() {
+        if value_date[i] == None
+            || mty_date[i] == None
+            || ref_date[i] == None
+            || redem_value[i].is_na()
+            || cpn_rate[i].is_na()
+            || clean_price[i].is_na()
+            || cpn_freq[i].is_na()
+        {
             ytm.push(None);
             macd.push(None);
             modd.push(None);
@@ -91,7 +109,7 @@ fn bond_result(
                     ytm.push(Some(out.ytm));
                     macd.push(Some(out.macd));
                     modd.push(Some(out.modd));
-                },
+                }
                 None => {
                     ytm.push(None);
                     macd.push(None);

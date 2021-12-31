@@ -85,11 +85,8 @@ impl FixedBond {
         } else {
             NaiveDate::from_ymd(year, (month + 1) as u32, 1)
         };
-        let max_day = since(
-            nxt_month,
-            NaiveDate::from_ymd(year, month as u32, 1),
-        )
-        .num_days() as u32;
+        let max_day =
+            since(nxt_month, NaiveDate::from_ymd(year, month as u32, 1)).num_days() as u32;
         let day = ref_date.day();
         NaiveDate::from_ymd(
             year,
@@ -169,7 +166,13 @@ impl FixedBond {
 
         match cpn_dates.binary_search(&ref_date) {
             // when ok, it means it's one of the cpn date and the coupon has been paid then should be zero
-            Ok(i) => if eop { 0.0 } else { calculate(i) },
+            Ok(i) => {
+                if eop {
+                    0.0
+                } else {
+                    calculate(i)
+                }
+            }
             Err(i) => calculate(i),
         }
     }
@@ -315,7 +318,10 @@ mod tests {
         let out = bond.cashflow().data;
         let mut expect: BTreeMap<NaiveDate, f64> = BTreeMap::new();
         expect.insert(NaiveDate::from_ymd(2010, 7, 1), 2.5);
-        expect.insert(NaiveDate::from_ymd(2010, 8, 1), 100.0 + 5.0 * 0.5 * 31.0 / 184.0);
+        expect.insert(
+            NaiveDate::from_ymd(2010, 8, 1),
+            100.0 + 5.0 * 0.5 * 31.0 / 184.0,
+        );
         assert_eq!(out, expect);
     }
     #[test]
@@ -349,10 +355,22 @@ mod tests {
     fn add_months() {
         let ref_date = NaiveDate::from_ymd(2020, 12, 31);
         assert_eq!(FixedBond::add_months(&ref_date, 0), ref_date);
-        assert_eq!(FixedBond::add_months(&ref_date, 1), NaiveDate::from_ymd(2021, 1, 31));
-        assert_eq!(FixedBond::add_months(&ref_date, 2), NaiveDate::from_ymd(2021, 2, 28));
-        assert_eq!(FixedBond::add_months(&ref_date, 11), NaiveDate::from_ymd(2021, 11, 30));
-        assert_eq!(FixedBond::add_months(&ref_date, 12), NaiveDate::from_ymd(2021, 12, 31));
+        assert_eq!(
+            FixedBond::add_months(&ref_date, 1),
+            NaiveDate::from_ymd(2021, 1, 31)
+        );
+        assert_eq!(
+            FixedBond::add_months(&ref_date, 2),
+            NaiveDate::from_ymd(2021, 2, 28)
+        );
+        assert_eq!(
+            FixedBond::add_months(&ref_date, 11),
+            NaiveDate::from_ymd(2021, 11, 30)
+        );
+        assert_eq!(
+            FixedBond::add_months(&ref_date, 12),
+            NaiveDate::from_ymd(2021, 12, 31)
+        );
     }
 
     #[test]
