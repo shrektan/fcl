@@ -19,7 +19,7 @@ fn robj2date(x: Robj, var: &str) -> Vec<Option<NaiveDate>> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
     #[test]
     fn to_date() {
