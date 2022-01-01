@@ -20,4 +20,7 @@ test_that("bond works", {
   expect_equal(
     as.double(bond_result(ymd("2018-01-01"), ymd("2020-01-01"), 100.0, 0.05, 1L, ymd("2022-01-01"), 100.0)), na_out
   )
+  expect_equal(
+    as.double(bond_result(ymd("2018-01-01"), ymd("2020-01-01"), 100.0, 0.05, 3L, ymd("2019-01-01"), 100.0)), na_out
+  )
 })

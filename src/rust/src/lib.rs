@@ -2,6 +2,7 @@ use chrono::NaiveDate;
 use extendr_api::prelude::*;
 mod bond;
 
+
 fn robj2date(x: Robj, var: &str) -> Vec<Option<NaiveDate>> {
     if !x.inherits("Date") || x.rtype() != RType::Real {
         panic!("`{}` must be Date and use double value", &var)
@@ -101,10 +102,16 @@ fn bond_result(
                 mty_date[i].unwrap(),
                 redem_value[i],
                 cpn_rate[i],
-                cpn_freq[i] as u32,
+                cpn_freq[i],
             );
+            if bond.is_err() {
+                ytm.push(None);
+                macd.push(None);
+                modd.push(None);
+                continue;
+            }
             let ref_date = ref_date[i].unwrap();
-            match bond.result(&ref_date, clean_price[i]) {
+            match bond.unwrap().result(&ref_date, clean_price[i]) {
                 Some(out) => {
                     ytm.push(Some(out.ytm));
                     macd.push(Some(out.macd));
