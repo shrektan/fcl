@@ -2,7 +2,6 @@ use chrono::NaiveDate;
 use extendr_api::prelude::*;
 mod bond;
 
-
 fn robj2date(x: Robj, var: &str) -> Vec<Option<NaiveDate>> {
     if !x.inherits("Date") || x.rtype() != RType::Real {
         panic!("`{}` must be Date and use double value", &var)

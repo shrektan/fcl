@@ -56,7 +56,7 @@ impl Cashflow {
 #[derive(Debug)]
 enum CpnFreq {
     Regular(i32),
-    Zero
+    Zero,
 }
 
 fn to_cpn_freq(cpn_freq: i32) -> Result<CpnFreq, String> {
@@ -75,15 +75,13 @@ impl FixedBond {
         cpn_rate: f64,
         cpn_freq: i32,
     ) -> Result<Self, String> {
-        Result::Ok(
-            Self {
-                value_date,
-                mty_date,
-                redem_value,
-                cpn_rate,
-                cpn_freq: to_cpn_freq(cpn_freq)?,
-            }
-        )
+        Result::Ok(Self {
+            value_date,
+            mty_date,
+            redem_value,
+            cpn_rate,
+            cpn_freq: to_cpn_freq(cpn_freq)?,
+        })
     }
     fn years(d1: &NaiveDate, d0: &NaiveDate) -> f64 {
         (d1.year() - d0.year()) as f64
@@ -148,7 +146,7 @@ impl FixedBond {
     fn cpn_value(&self) -> f64 {
         let factor = match self.cpn_freq {
             CpnFreq::Regular(i) => 1.0 / i as f64,
-            CpnFreq::Zero => Self::years(&self.mty_date, &self.value_date)
+            CpnFreq::Zero => Self::years(&self.mty_date, &self.value_date),
         };
         self.redem_value * self.cpn_rate * factor
     }
@@ -261,7 +259,8 @@ mod tests {
             100.0,
             0.05,
             2,
-        ).unwrap();
+        )
+        .unwrap();
         let ref_date = NaiveDate::from_ymd(2010, 1, 1);
         assert_eq!(bond.accrued(&ref_date, true), 0.0);
         let ref_date = NaiveDate::from_ymd(2011, 7, 1);
