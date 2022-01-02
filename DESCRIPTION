@@ -2,7 +2,8 @@ Package: fcl
 Title: Financial Calculator
 Version: 0.0.6
 Authors@R:
-    person("Xianying", "Tan", , "shrektan@126.com", role = c("aut", "cre"))
+    person("Xianying", "Tan", , "shrektan@126.com", role = c("aut", "cre"),
+           comment = c("ORCID" = "0000-0002-6072-3521"))
 Description: Calculate Bond YTM / Duration, fast time-weighted rate of return, Modified Dietz, etc.
 License: MIT + file LICENSE
 Encoding: UTF-8
