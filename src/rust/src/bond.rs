@@ -25,13 +25,13 @@ impl Cashflow {
     fn size(&self) -> usize {
         self.data.len()
     }
-    fn new() -> Cashflow {
+    fn new() -> Self {
         let data: BTreeMap<NaiveDate, f64> = BTreeMap::new();
-        return Cashflow { data };
+        return Self { data };
     }
-    fn cf(&self, ref_date: &NaiveDate, price: f64) -> Cashflow {
+    fn cf(&self, ref_date: &NaiveDate, price: f64) -> Self {
         if self.size() == 0 {
-            return Cashflow::new();
+            return Self::new();
         }
         let mut data: BTreeMap<NaiveDate, f64> = BTreeMap::new();
         data.insert(*ref_date, -price);
@@ -40,7 +40,7 @@ impl Cashflow {
                 data.insert(*k, *v);
             }
         }
-        Cashflow { data }
+        Self { data }
     }
     fn xirr_cf(&self) -> (Vec<DateTime<Utc>>, Vec<f64>) {
         let mut cfs: Vec<f64> = Vec::new();
@@ -74,9 +74,9 @@ impl FixedBond {
         redem_value: f64,
         cpn_rate: f64,
         cpn_freq: i32,
-    ) -> Result<FixedBond, String> {
+    ) -> Result<Self, String> {
         Result::Ok(
-            FixedBond {
+            Self {
                 value_date,
                 mty_date,
                 redem_value,
@@ -131,7 +131,7 @@ impl FixedBond {
             return None;
         }
         let res = match self.cpn_freq {
-            CpnFreq::Regular(i) => Some(FixedBond::add_months(ref_date, 12 / i as u32)),
+            CpnFreq::Regular(i) => Some(Self::add_months(ref_date, 12 / i as u32)),
             CpnFreq::Zero => Some(self.mty_date),
         };
         match res {
@@ -148,7 +148,7 @@ impl FixedBond {
     fn cpn_value(&self) -> f64 {
         let factor = match self.cpn_freq {
             CpnFreq::Regular(i) => 1.0 / i as f64,
-            CpnFreq::Zero => FixedBond::years(&self.mty_date, &self.value_date)
+            CpnFreq::Zero => Self::years(&self.mty_date, &self.value_date)
         };
         self.redem_value * self.cpn_rate * factor
     }
