@@ -1,72 +1,7 @@
-use chrono::{Datelike, NaiveDate};
+use chrono::{NaiveDate};
 use extendr_api::prelude::*;
 mod bond;
-
-// The days from 1970-1-1 (R's first date) to CE (1-1-0)
-const R_DATE_FROM_CE: i32 = 719163;
-
-fn robj2date(x: Robj, var: &str) -> Result<Vec<Option<NaiveDate>>> {
-    if !x.inherits("Date") {
-        return Result::Err( Error::Other(format!("{} is not a Date", var)) );
-    }
-    let out = match x.rtype() {
-        RType::Real => x
-            .as_real_iter()
-            .unwrap()
-            .map(|d| {
-                if d.is_na() {
-                    None
-                } else {
-                    NaiveDate::from_num_days_from_ce_opt(d as i32 + R_DATE_FROM_CE)
-                }
-            })
-            .collect(),
-        RType::Integer => x
-            .as_integer_iter()
-            .unwrap()
-            .map(|d| {
-                if d.is_na() {
-                    None
-                } else {
-                    NaiveDate::from_num_days_from_ce_opt(d + R_DATE_FROM_CE)
-                }
-            })
-            .collect(),
-        _ => {
-            return Result::Err( Error::Other(format!("{} is Date but the type is not integer or double", var)) );
-        }
-    };
-    Result::Ok(out)
-}
-
-fn date2rnum(x: &NaiveDate) -> f64 {
-    (x.num_days_from_ce() - R_DATE_FROM_CE) as f64
-}
-
-fn to_rdate(x: &Option<NaiveDate>) -> Option<f64> {
-    match x {
-        Some(v) => Some(date2rnum(v)),
-        None => None,
-    }
-}
-
-fn make_rdate(x: Vec<Option<f64>>) -> Robj {
-    r!(x).set_class(&["Date"]).unwrap()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn to_date() {
-        test! {
-            single_threaded(|| {
-                let x: Robj = r!([18990.0, 18991.0]).set_class(&["Date"]).unwrap();
-                assert_eq!(robj2date(x, "x").unwrap(), [Some(NaiveDate::from_ymd(2021, 12, 29)), Some(NaiveDate::from_ymd(2021, 12, 30))]);
-            });
-        }
-    }
-}
+mod rdate;
 
 fn check_len(x: [&Robj; 2], var: [&str; 2]) {
     if x[0].len() != x[1].len() {
@@ -93,8 +28,8 @@ fn make_bond(
     check_len([&value_date, &cpn_rate], ["value_date", "cpn_rate"]);
     check_len([&value_date, &cpn_freq], ["value_date", "cpn_freq"]);
 
-    let value_date = robj2date(value_date, "value_date").unwrap();
-    let mty_date = robj2date(mty_date, "mty_date").unwrap();
+    let value_date = rdate::robj2date(value_date, "value_date").unwrap();
+    let mty_date = rdate::robj2date(mty_date, "mty_date").unwrap();
     let redem_value = redem_value
         .as_real_slice()
         .expect("redem_value must be double");
@@ -159,9 +94,9 @@ fn bond_cf(
         }
     }
     let rdates: Vec<Option<f64>> = dates.iter().map(|v| {
-        to_rdate(&Some(*v))
+        rdate::to_rdate(&Some(*v))
     }).collect();
-    data_frame!(ID = ids, DATE = make_rdate(rdates), CF = cfs)
+    data_frame!(ID = ids, DATE = rdate::make_rdate(rdates), CF = cfs)
 }
 
 /// Calculate the Bond's YTM, Maclay Duration, Modified Duration
@@ -183,7 +118,7 @@ fn bond_result(
 ) -> Robj {
     check_len([&value_date, &ref_date], ["value_date", "ref_date"]);
     check_len([&value_date, &clean_price], ["value_date", "clean_price"]);
-    let ref_date = robj2date(ref_date, "ref_date").unwrap();
+    let ref_date = rdate::robj2date(ref_date, "ref_date").unwrap();
     let clean_price = clean_price
         .as_real_slice()
         .expect("clean_price must be double");
