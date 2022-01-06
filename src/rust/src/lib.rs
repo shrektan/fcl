@@ -1,4 +1,4 @@
-use chrono::{NaiveDate};
+use chrono::NaiveDate;
 use extendr_api::prelude::*;
 mod bond;
 mod rdate;
@@ -63,7 +63,6 @@ fn make_bond(
     out
 }
 
-
 /// Generate bond's cash flows
 /// @inheritParams bond_result
 /// @export
@@ -73,11 +72,9 @@ fn bond_cf(
     mty_date: Robj,
     redem_value: Robj,
     cpn_rate: Robj,
-    cpn_freq: Robj
+    cpn_freq: Robj,
 ) -> Robj {
-    let bonds = make_bond(
-        value_date, mty_date, redem_value, cpn_rate, cpn_freq,
-    );
+    let bonds = make_bond(value_date, mty_date, redem_value, cpn_rate, cpn_freq);
     let mut ids: Vec<i32> = Vec::new();
     let mut dates: Vec<NaiveDate> = Vec::new();
     let mut cfs: Vec<f64> = Vec::new();
@@ -88,14 +85,11 @@ fn bond_cf(
                 cfs.append(&mut cf.values());
                 dates.append(&mut cf.dates());
                 ids.append(&mut vec![i as i32 + 1; cf.len()]);
-            },
-            None => {
             }
+            None => {}
         }
     }
-    let rdates: Vec<Option<f64>> = dates.iter().map(|v| {
-        rdate::to_rdate(&Some(*v))
-    }).collect();
+    let rdates: Vec<Option<f64>> = dates.iter().map(|v| rdate::to_rdate(&Some(*v))).collect();
     data_frame!(ID = ids, DATE = rdate::make_rdate(rdates), CF = cfs)
 }
 
@@ -122,9 +116,7 @@ fn bond_result(
     let clean_price = clean_price
         .as_real_slice()
         .expect("clean_price must be double");
-    let bonds = make_bond(
-        value_date, mty_date, redem_value, cpn_rate, cpn_freq,
-    );
+    let bonds = make_bond(value_date, mty_date, redem_value, cpn_rate, cpn_freq);
     struct Out {
         ytm: Vec<Option<f64>>,
         macd: Vec<Option<f64>>,
@@ -162,9 +154,9 @@ fn bond_result(
                     Some(value) => {
                         out.push(value);
                     }
-                    None => out.push_none()
+                    None => out.push_none(),
                 }
-            },
+            }
             None => out.push_none(),
         }
     }
