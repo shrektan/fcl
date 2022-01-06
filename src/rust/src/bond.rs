@@ -17,6 +17,13 @@ pub struct BondVal {
     pub modd: f64,
 }
 
+#[derive(Copy, Clone)]
+pub enum BondCfType {
+    Coupon,
+    Redem,
+    All,
+}
+
 #[derive(Debug)]
 pub struct Cashflow {
     data: BTreeMap<NaiveDate, f64>,
@@ -196,17 +203,23 @@ impl FixedBond {
     fn dirty_price(&self, ref_date: &NaiveDate, clean_price: f64) -> f64 {
         clean_price + self.accrued(ref_date, true)
     }
-    pub fn cashflow(&self) -> Cashflow {
+    pub fn cashflow(&self, cftype: BondCfType) -> Cashflow {
         let mut ref_date = self.nxt_cpn_date(&self.value_date, true);
         let mut res: Cashflow = Cashflow::new();
         loop {
             match ref_date {
                 Some(date) => {
-                    let value: f64 = if date == self.mty_date {
+                    let redem: f64 = if date == self.mty_date {
                         self.redem_value
                     } else {
                         0.0
-                    } + self.accrued(&date, false);
+                    };
+                    let cpn = self.accrued(&date, false);
+                    let value = match cftype {
+                        BondCfType::Coupon => cpn,
+                        BondCfType::Redem => redem,
+                        BondCfType::All => cpn + redem,
+                    };
                     res.data.insert(date, value);
                     ref_date = self.nxt_cpn_date(&date, true);
                 }
@@ -217,7 +230,7 @@ impl FixedBond {
     }
     pub fn result(&self, ref_date: &NaiveDate, clean_price: f64) -> Option<BondVal> {
         let dirty_price = self.dirty_price(ref_date, clean_price);
-        let cf = self.cashflow().cf(ref_date, Some(dirty_price)).xirr_cf();
+        let cf = self.cashflow(BondCfType::All).cf(ref_date, Some(dirty_price)).xirr_cf();
         if (&cf.0).len() == 0 {
             return None; // otherwise xirr will throw
         }
@@ -229,7 +242,7 @@ impl FixedBond {
             -(npv1 - npv0) / (2.0 * ytm_chg * dirty_price)
         };
         let macd = {
-            let cf2 = self.cashflow().cf(ref_date, Some(dirty_price));
+            let cf2 = self.cashflow(BondCfType::All).cf(ref_date, Some(dirty_price));
             let years: Vec<f64> = cf2
                 .data
                 .keys()
@@ -338,7 +351,7 @@ mod tests {
             cpn_rate: 0.05,
             cpn_freq: to_cpn_freq(2).unwrap(),
         };
-        let out = bond.cashflow().data;
+        let out = bond.cashflow(BondCfType::All).data;
         let mut expect: BTreeMap<NaiveDate, f64> = BTreeMap::new();
         expect.insert(NaiveDate::from_ymd(2010, 7, 1), 2.5);
         expect.insert(

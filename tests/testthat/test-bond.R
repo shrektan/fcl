@@ -12,7 +12,7 @@ test_that("bond works", {
   expect_equal(out, expect)
 
   out <- bond_cf(ymd("2026-01-01", "2021-02-01"), ymd("2025-01-01", "2030-02-01"), c(100.0, 100.0), c(0.05, 0.03), c(0L, 1L))
-  expect <- data.frame(ID = 2L, DATE = as.Date(sprintf("%s-02-01", 2022:2030)), CF = c(rep(3, 8), 103))
+  expect <- data.frame(ID = 2L, DATE = as.Date(sprintf("%s-02-01", 2022:2030)), COUPON = rep(3, 9), REDEM = c(rep(0, 8), 100))
   expect_equal(out, expect)
 
   out <- bond_result(ymd("2021-01-01", "2021-02-01"), ymd("2025-01-01", "2030-02-01"), c(100.0, NA), c(0.05, 0.03), c(0L, 1L), ymd("2022-01-01", "2022-02-01"), c(100, 100))

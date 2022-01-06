@@ -77,12 +77,15 @@ fn bond_cf(
     let bonds = make_bond(value_date, mty_date, redem_value, cpn_rate, cpn_freq);
     let mut ids: Vec<i32> = Vec::new();
     let mut dates: Vec<NaiveDate> = Vec::new();
-    let mut cfs: Vec<f64> = Vec::new();
+    let mut cpns: Vec<f64> = Vec::new();
+    let mut redems: Vec<f64> = Vec::new();
     for (i, bond) in bonds.iter().enumerate() {
         match bond {
             Some(value) => {
-                let cf = value.cashflow();
-                cfs.append(&mut cf.values());
+                let cf = value.cashflow(bond::BondCfType::Coupon);
+                cpns.append(&mut cf.values());
+                let cf = value.cashflow(bond::BondCfType::Redem);
+                redems.append(&mut cf.values());
                 dates.append(&mut cf.dates());
                 ids.append(&mut vec![i as i32 + 1; cf.len()]);
             }
@@ -90,7 +93,7 @@ fn bond_cf(
         }
     }
     let rdates: Vec<Option<f64>> = dates.iter().map(|v| rdate::to_rdate(&Some(*v))).collect();
-    data_frame!(ID = ids, DATE = rdate::make_rdate(rdates), CF = cfs)
+    data_frame!(ID = ids, DATE = rdate::make_rdate(rdates), COUPON = cpns, REDEM = redems)
 }
 
 /// Calculate the Bond's YTM, Maclay Duration, Modified Duration
