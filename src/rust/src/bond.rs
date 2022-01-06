@@ -18,7 +18,7 @@ pub struct BondVal {
 }
 
 #[derive(Debug)]
-struct Cashflow {
+pub struct Cashflow {
     data: BTreeMap<NaiveDate, f64>,
 }
 impl Cashflow {
@@ -29,12 +29,23 @@ impl Cashflow {
         let data: BTreeMap<NaiveDate, f64> = BTreeMap::new();
         return Self { data };
     }
-    fn cf(&self, ref_date: &NaiveDate, price: f64) -> Self {
+    pub fn dates(&self) -> Vec<NaiveDate> {
+        self.data.keys().cloned().collect()
+    }
+    pub fn values(&self) -> Vec<f64> {
+        self.data.values().cloned().collect()
+    }
+    pub fn len(&self) -> usize {
+        self.data.len()
+    }
+    pub fn cf(&self, ref_date: &NaiveDate, price: Option<f64>) -> Self {
         if self.size() == 0 {
             return Self::new();
         }
         let mut data: BTreeMap<NaiveDate, f64> = BTreeMap::new();
-        data.insert(*ref_date, -price);
+        if price.is_some() {
+            data.insert(*ref_date, -price.unwrap());
+        }
         for (k, v) in &self.data {
             if k > ref_date {
                 data.insert(*k, *v);
@@ -185,7 +196,7 @@ impl FixedBond {
     fn dirty_price(&self, ref_date: &NaiveDate, clean_price: f64) -> f64 {
         clean_price + self.accrued(ref_date, true)
     }
-    fn cashflow(&self) -> Cashflow {
+    pub fn cashflow(&self) -> Cashflow {
         let mut ref_date = self.nxt_cpn_date(&self.value_date, true);
         let mut res: Cashflow = Cashflow::new();
         loop {
@@ -206,7 +217,7 @@ impl FixedBond {
     }
     pub fn result(&self, ref_date: &NaiveDate, clean_price: f64) -> Option<BondVal> {
         let dirty_price = self.dirty_price(ref_date, clean_price);
-        let cf = self.cashflow().cf(ref_date, dirty_price).xirr_cf();
+        let cf = self.cashflow().cf(ref_date, Some(dirty_price)).xirr_cf();
         if (&cf.0).len() == 0 {
             return None; // otherwise xirr will throw
         }
@@ -218,7 +229,7 @@ impl FixedBond {
             -(npv1 - npv0) / (2.0 * ytm_chg * dirty_price)
         };
         let macd = {
-            let cf2 = self.cashflow().cf(ref_date, dirty_price);
+            let cf2 = self.cashflow().cf(ref_date, Some(dirty_price));
             let years: Vec<f64> = cf2
                 .data
                 .keys()

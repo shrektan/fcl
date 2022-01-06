@@ -17,3 +17,8 @@ NULL
 #' @export
 bond_result <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date, clean_price) .Call(wrap__bond_result, value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date, clean_price)
 
+#' Generate bond's cash flows
+#' @inheritParams bond_result
+#' @export
+bond_cf <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq) .Call(wrap__bond_cf, value_date, mty_date, redem_value, cpn_rate, cpn_freq)
+
