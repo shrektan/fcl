@@ -163,7 +163,7 @@ fn bond_result(
             None => out.push_none(),
         }
     }
-    data_frame!(ytm = out.ytm, macd = out.macd, modd = out.modd)
+    data_frame!(YTM = out.ytm, MACD = out.macd, MODD = out.modd)
 }
 // Macro to generate exports.
 // This ensures exported functions are registered with R.
