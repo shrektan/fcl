@@ -1,3 +1,7 @@
+# fcl 0.0.7
+
+* Implement `bond_cf()` which give the forecasting cashflows of a bond.
+
 # fcl 0.0.6
 
 * Added a `NEWS.md` file to track changes to the package.

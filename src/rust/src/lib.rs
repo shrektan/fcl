@@ -152,7 +152,7 @@ fn bond_cf(
                 let cf = value.cashflow();
                 cfs.append(&mut cf.values());
                 dates.append(&mut cf.dates());
-                ids.append(&mut vec![i as i32; cf.len()]);
+                ids.append(&mut vec![i as i32 + 1; cf.len()]);
             },
             None => {
             }
