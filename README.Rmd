@@ -1,0 +1,51 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# fcl
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/shrektan/fcl/workflows/R-CMD-check/badge.svg)](https://github.com/shrektan/fcl/actions)
+[![CRAN status](https://www.r-pkg.org/badges/version/fcl)](https://CRAN.R-project.org/package=fcl)
+<!-- badges: end -->
+
+A financial calculator written in Rust. It provides simple calculations for bond YTM, Duration, etc.
+
+## Installation
+
+You'll need the rust toolchain to compile this package from source.
+
+## Example
+
+```{r example}
+library(fcl)
+## basic example code
+ymd <- function(...) as.Date(as.character(list(...)))
+bond_result(
+  ymd("2021-01-01", "2021-02-01"),
+  ymd("2025-01-01", "2030-02-01"),
+  c(100.0, 100.0),
+  c(0.05, 0.03),
+  c(0L, 1L),
+  ymd("2022-01-01", "2022-02-01"),
+  c(100, 100)
+)
+bond_cf(
+  ymd("2021-01-01", "2021-02-01"),
+  ymd("2025-01-01", "2030-02-01"),
+  c(100.0, 100.0),
+  c(0.05, 0.03),
+  c(0L, 1L)
+)
+```
