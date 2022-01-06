@@ -1,9 +1,7 @@
 on:
   push:
-    branches:
-      - main
-    tags:
-      - 'v*'
+    branches: [main, master]
+    tags: ['v*', 'build*']
 
 name: R-CMD-check
 
@@ -17,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # - {os: windows-latest, r: 'release',    rust: 'stable'}
+          - {os: windows-latest, r: 'release',    rust: 'stable'}
           - {os: macOS-latest,   r: 'release',    rust: 'stable'}
           - {os: ubuntu-18.04,   r: 'release',    rust: 'stable',  rspm: "https://packagemanager.rstudio.com/cran/__linux__/bionic/latest"}
           # - {os: ubuntu-18.04,   r: 'devel',      rust: 'stable',  rspm: "https://packagemanager.rstudio.com/cran/__linux__/bionic/latest", http-user-agent: "R/4.1.0 (ubuntu-20.04) R (4.1.0 x86_64-pc-linux-gnu x86_64 linux-gnu) on GitHub Actions" }
@@ -27,12 +25,12 @@ jobs:
           #       So, this is probably unnecessary, but leave this as-is as this
           #       might be eventually useful for other package that depends on
           #       some C/C++ library.
-          # - {os: windows-2022, r: 'devel-ucrt', rust: 'stable'}
+          - {os: windows-2022, r: 'devel-ucrt', rust: 'stable'}
 
     env:
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      # used in tools/configure_utils.sh
+      # used in tools/configure.R
       ABORT_WHEN_NO_CARGO: "true"
 
     steps:
@@ -120,18 +118,87 @@ jobs:
           path: check
 
       - name: Test Rust Code
+        # TODO
+        # will throw error that `linking with `link.exe` failed: exit code: 1181` on windows
+        # ignore for now but need to be fixed in the future
+        if: runner.os != 'Windows'
         working-directory: ./src/rust
         run: cargo test
 
       - name: Build binaries
-        if: ${{ matrix.config.os=='ubuntu-18.04' && matrix.config.r=='release' && startsWith(github.ref, 'refs/tags/') }}
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           dir.create("./pkgbin")
           pkgbuild::build(binary = TRUE, dest_path = "./pkgbin")
         shell: Rscript {0}
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: ${{ matrix.config.os=='ubuntu-18.04' && matrix.config.r=='release' && startsWith(github.ref, 'refs/tags/') }}
+      - name: Upload pkgbin
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@main
         with:
-          files: "./pkgbin/*"
+          name: pkgbin
+          path: pkgbin
+
+      # Upload prebuilt binaries for Windows
+      - name: Tweak staticlib on Windows
+        if: runner.os == 'Windows'
+        run: |
+          # list all staticlibs
+          find ./check -name libfcl.a
+          mkdir ./staticlib
+          # R-devel already drops 32bit Windows!
+          if ( "$(Rscript -e 'cat(R.Version()$crt)')".Equals('ucrt') ) {
+            mv ./check/fcl.Rcheck/00_pkg_src/fcl/src/rust/target/x86_64-pc-windows-gnu/release/libfcl.a staticlib/ucrt-x86_64-pc-windows-gnu-libfcl.a
+          } else {
+            mv ./check/fcl.Rcheck/00_pkg_src/fcl/src-x64/rust/target/x86_64-pc-windows-gnu/release/libfcl.a staticlib/x86_64-pc-windows-gnu-libfcl.a
+            mv ./check/fcl.Rcheck/00_pkg_src/fcl/src-i386/rust/target/i686-pc-windows-gnu/release/libfcl.a staticlib/i686-pc-windows-gnu-libfcl.a
+          }
+          ls ./staticlib
+        shell: pwsh
+
+      # Upload prebuilt binaries for macOS
+      - name: Tweak staticlib on macOS
+        if: runner.os == 'macOS' && matrix.config.r == 'release'
+        run: |
+          # list all staticlibs
+          find ./check -name libfcl.a
+          mkdir ./staticlib
+          # Intel macOS
+          mv ./check/fcl.Rcheck/00_pkg_src/fcl/src/rust/target/release/libfcl.a staticlib/x86_64-apple-darwin-libfcl.a
+          # For M1 macOS
+          rustup target add aarch64-apple-darwin
+          . "${HOME}/.cargo/env" && cargo build --target=aarch64-apple-darwin --lib --release --manifest-path=./check/fcl.Rcheck/00_pkg_src/fcl/src/rust/Cargo.toml
+          mv ./check/fcl.Rcheck/00_pkg_src/fcl/src/rust/target/aarch64-apple-darwin/release/libfcl.a staticlib/aarch64-apple-darwin-libfcl.a
+          ls ./staticlib
+        shell: pwsh
+
+      - name: Upload staticlib
+        uses: actions/upload-artifact@main
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: staticlib
+          path: staticlib
+
+  release:
+    needs: R-CMD-check
+    runs-on: ubuntu-latest
+    # Do not run this on pull request
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+
+      - name: Checksum staticlib
+        run: |
+          cd staticlib
+          sha256sum * > sha256sums.txt
+      - name: Release staticlib
+        uses: softprops/action-gh-release@v1
+        with:
+          files: 'staticlib/*'
+
+      - name: Release pkgbinary
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "pkgbin/*"
