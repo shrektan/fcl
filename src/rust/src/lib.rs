@@ -73,18 +73,24 @@ fn bond_cf(
     redem_value: Robj,
     cpn_rate: Robj,
     cpn_freq: Robj,
+    ref_date: Robj,
 ) -> Robj {
+    check_len([&value_date, &ref_date], ["value_date", "ref_date"]);
+    let ref_date = rdate::robj2date(ref_date, "ref_date").unwrap();
     let bonds = make_bond(value_date, mty_date, redem_value, cpn_rate, cpn_freq);
     let mut ids: Vec<i32> = Vec::new();
     let mut dates: Vec<NaiveDate> = Vec::new();
     let mut cpns: Vec<f64> = Vec::new();
     let mut redems: Vec<f64> = Vec::new();
     for (i, bond) in bonds.iter().enumerate() {
+        if ref_date[i].is_none() {
+            continue;
+        }
         match bond {
             Some(value) => {
-                let cf = value.cashflow(bond::BondCfType::Coupon);
+                let cf = value.cashflow(bond::BondCfType::Coupon).cf(&ref_date[i].unwrap(), None);
                 cpns.append(&mut cf.values());
-                let cf = value.cashflow(bond::BondCfType::Redem);
+                let cf = value.cashflow(bond::BondCfType::Redem).cf(&ref_date[i].unwrap(), None);
                 redems.append(&mut cf.values());
                 dates.append(&mut cf.dates());
                 ids.append(&mut vec![i as i32 + 1; cf.len()]);

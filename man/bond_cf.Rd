@@ -4,7 +4,7 @@
 \alias{bond_cf}
 \title{Generate bond's cash flows}
 \usage{
-bond_cf(value_date, mty_date, redem_value, cpn_rate, cpn_freq)
+bond_cf(value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date)
 }
 \arguments{
 \item{value_date}{the value and maturity date of the bond}
@@ -19,6 +19,8 @@ Note that the \strong{frequency} can only be one of 1, 2, 4, 0 (pay at mature)}
 
 \item{cpn_freq}{the redemption value, coupon rate and coupon frequency of the bond.
 Note that the \strong{frequency} can only be one of 1, 2, 4, 0 (pay at mature)}
+
+\item{ref_date}{the reference date and the clean price that used to calculate the bond results}
 }
 \description{
 Generate bond's cash flows
