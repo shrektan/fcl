@@ -2,6 +2,7 @@ use chrono::NaiveDate;
 use extendr_api::prelude::*;
 mod bond;
 mod rdate;
+mod rtn;
 
 fn check_len(x: [&Robj; 2], var: [&str; 2]) {
     if x[0].len() != x[1].len() {
@@ -88,9 +89,13 @@ fn bond_cf(
         }
         match bond {
             Some(value) => {
-                let cf = value.cashflow(bond::BondCfType::Coupon).cf(&ref_date[i].unwrap(), None);
+                let cf = value
+                    .cashflow(bond::BondCfType::Coupon)
+                    .cf(&ref_date[i].unwrap(), None);
                 cpns.append(&mut cf.values());
-                let cf = value.cashflow(bond::BondCfType::Redem).cf(&ref_date[i].unwrap(), None);
+                let cf = value
+                    .cashflow(bond::BondCfType::Redem)
+                    .cf(&ref_date[i].unwrap(), None);
                 redems.append(&mut cf.values());
                 dates.append(&mut cf.dates());
                 ids.append(&mut vec![i as i32 + 1; cf.len()]);
@@ -99,7 +104,12 @@ fn bond_cf(
         }
     }
     let rdates: Vec<Option<f64>> = dates.iter().map(|v| rdate::to_rdate(&Some(*v))).collect();
-    data_frame!(ID = ids, DATE = rdate::make_rdate(rdates), COUPON = cpns, REDEM = redems)
+    data_frame!(
+        ID = ids,
+        DATE = rdate::make_rdate(rdates),
+        COUPON = cpns,
+        REDEM = redems
+    )
 }
 
 /// Calculate the Bond's YTM, Maclay Duration, Modified Duration

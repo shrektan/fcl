@@ -230,7 +230,10 @@ impl FixedBond {
     }
     pub fn result(&self, ref_date: &NaiveDate, clean_price: f64) -> Option<BondVal> {
         let dirty_price = self.dirty_price(ref_date, clean_price);
-        let cf = self.cashflow(BondCfType::All).cf(ref_date, Some(dirty_price)).xirr_cf();
+        let cf = self
+            .cashflow(BondCfType::All)
+            .cf(ref_date, Some(dirty_price))
+            .xirr_cf();
         if (&cf.0).len() == 0 {
             return None; // otherwise xirr will throw
         }
@@ -242,7 +245,9 @@ impl FixedBond {
             -(npv1 - npv0) / (2.0 * ytm_chg * dirty_price)
         };
         let macd = {
-            let cf2 = self.cashflow(BondCfType::All).cf(ref_date, Some(dirty_price));
+            let cf2 = self
+                .cashflow(BondCfType::All)
+                .cf(ref_date, Some(dirty_price));
             let years: Vec<f64> = cf2
                 .data
                 .keys()
