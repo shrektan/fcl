@@ -119,7 +119,7 @@ mod tests {
         assert_eq!(twrr_cr.0, vec![1, 2, 3, 4, 5]);
         assert_eq!(twrr_cr.1, vec![None, None, None, None, None]);
         assert_eq!(rtn.mvs, vec![100., 100., 102., 103., 104.]);
-        assert_eq!(&rtn.pls, &vec![0., 0., 2., 1., 1.]);
+        assert_near_eq!(rtn.pls, vec![0., 0., 2., 1., 1.]);
 
         let twrr_dr = rtn.twrr_dr(2, 5).unwrap();
         assert_eq!(twrr_dr.0, vec![2, 3, 4, 5]);
@@ -129,9 +129,9 @@ mod tests {
         );
         let twrr_cr = rtn.twrr_cr(2, 5).unwrap();
         assert_eq!(twrr_cr.0, vec![2, 3, 4, 5]);
-        Vec::<Option<f64>>::assert_near_eq(
-            &twrr_cr.1,
-            &vec![Some(0.0), Some(0.02), Some(0.03), Some(0.04)],
+        assert_near_eq!(
+            twrr_cr.1,
+            vec![Some(0.0), Some(0.02), Some(0.03), Some(0.04)]
         );
     }
 }
