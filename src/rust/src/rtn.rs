@@ -38,7 +38,7 @@ impl Rtn {
                     pls.push(v.1);
                 }
                 Err(i) => {
-                    let v = data.get(&keys[i-1]).unwrap();
+                    let v = data.get(&keys[i - 1]).unwrap();
                     mvs.push(v.0);
                     pls.push(0.0);
                 }
@@ -51,21 +51,21 @@ impl Rtn {
     }
     fn mv0(&self, i: usize) -> Option<&f64> {
         if i == 0 {
-             None
+            None
         } else {
             self.mv(i - 1)
         }
     }
     fn pl(&self, i: usize) -> Option<&f64> {
-      self.pls.get(i)
+        self.pls.get(i)
     }
     fn cf(&self, i: usize) -> Option<f64> {
-        Some( self.mv(i)? - self.mv0(i)? - self.pl(i)? )
+        Some(self.mv(i)? - self.mv0(i)? - self.pl(i)?)
     }
     fn dr(&self, i: usize) -> Option<f64> {
         let cf = self.cf(i)?;
         let deno = if cf >= 0.0 { cf } else { 0.0 };
-        Some(self.pl(i)? / ( self.mv0(i)? + deno ))
+        Some(self.pl(i)? / (self.mv0(i)? + deno))
     }
     fn crs(drs: &Vec<Option<f64>>) -> Vec<Option<f64>> {
         let mut out: Vec<Option<f64>> = Vec::with_capacity(drs.len());
@@ -73,10 +73,10 @@ impl Rtn {
             let v = if i == 0 {
                 *dr
             } else {
-                if dr.is_none() || out[i-1].is_none() {
+                if dr.is_none() || out[i - 1].is_none() {
                     None
                 } else {
-                    Some((out[i-1].unwrap() + 1.) * (dr.unwrap() + 1.) - 1.)
+                    Some((out[i - 1].unwrap() + 1.) * (dr.unwrap() + 1.) - 1.)
                 }
             };
             out.push(v);
@@ -93,8 +93,8 @@ impl Rtn {
         let i_from = self.i(from).ok_or("from is out range")?;
         let i_to = self.i(to).ok_or("to is out range")?;
         let i_dates: Vec<usize> = (i_from..=i_to).collect();
-        let drs= i_dates.iter().map(|i| self.dr(*i) ).collect();
-        let dates: Vec<RDate>= (from..=to).collect();
+        let drs = i_dates.iter().map(|i| self.dr(*i)).collect();
+        let dates: Vec<RDate> = (from..=to).collect();
         Ok((dates, drs))
     }
     fn twrr_cr(&self, from: RDate, to: RDate) -> Result<(Vec<RDate>, Vec<Option<f64>>), String> {
@@ -104,11 +104,10 @@ impl Rtn {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::assert;
+    use crate::assert::NearEq;
     #[test]
     fn twrr_work() {
         let dates = vec![1, 3, 4, 5];
@@ -120,13 +119,19 @@ mod tests {
         assert_eq!(twrr_cr.0, vec![1, 2, 3, 4, 5]);
         assert_eq!(twrr_cr.1, vec![None, None, None, None, None]);
         assert_eq!(rtn.mvs, vec![100., 100., 102., 103., 104.]);
-        assert_eq!(rtn.pls, vec![0., 0., 2., 1., 1.]);
+        assert_eq!(&rtn.pls, &vec![0., 0., 2., 1., 1.]);
 
         let twrr_dr = rtn.twrr_dr(2, 5).unwrap();
         assert_eq!(twrr_dr.0, vec![2, 3, 4, 5]);
-        assert_eq!(twrr_dr.1, vec![Some(0.0), Some(0.02), Some(1. / 102.), Some(1. / 103.)]);
+        assert_eq!(
+            twrr_dr.1,
+            vec![Some(0.0), Some(0.02), Some(1. / 102.), Some(1. / 103.)]
+        );
         let twrr_cr = rtn.twrr_cr(2, 5).unwrap();
         assert_eq!(twrr_cr.0, vec![2, 3, 4, 5]);
-        assert::assert_near_eq(&twrr_cr.1, &vec![Some(0.0), Some(0.02), Some(0.03), Some(0.04)]);
+        Vec::<Option<f64>>::assert_near_eq(
+            &twrr_cr.1,
+            &vec![Some(0.0), Some(0.02), Some(0.03), Some(0.04)],
+        );
     }
 }

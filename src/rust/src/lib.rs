@@ -1,9 +1,9 @@
 use chrono::NaiveDate;
 use extendr_api::prelude::*;
+mod assert;
 mod bond;
 mod rdate;
 mod rtn;
-mod assert;
 
 fn check_len(x: [&Robj; 2], var: [&str; 2]) {
     if x[0].len() != x[1].len() {
