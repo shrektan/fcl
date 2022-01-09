@@ -56,3 +56,23 @@ macro_rules! assert_near_eq {
         }
     }};
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_ok() {
+    let x: Vec<f64>= vec![1., 2., 3.];
+    let y: Vec<f64> = vec![1., 2., 3.];
+    assert_near_eq!(x, y);
+  }
+
+  #[test]
+  #[should_panic(expected = "assert near equal failed")]
+  fn test_fail() {
+    let x: Vec<f64>= vec![1., 2., 3.];
+    let y: Vec<f64> = vec![1., 2., 4.];
+    assert_near_eq!(x, y);
+  }
+}
