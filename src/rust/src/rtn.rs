@@ -93,7 +93,6 @@ impl Rtn {
         let i_from = self.i(from).ok_or("from is out range")?;
         let i_to = self.i(to).ok_or("to is out range")?;
         let i_dates: Vec<usize> = (i_from..=i_to).collect();
-        dbg!(&i_dates);
         let drs= i_dates.iter().map(|i| self.dr(*i) ).collect();
         let dates: Vec<RDate>= (from..=to).collect();
         Ok((dates, drs))
@@ -105,9 +104,11 @@ impl Rtn {
     }
 }
 
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::assert;
     #[test]
     fn twrr_work() {
         let dates = vec![1, 3, 4, 5];
@@ -124,5 +125,8 @@ mod tests {
         let twrr_dr = rtn.twrr_dr(2, 5).unwrap();
         assert_eq!(twrr_dr.0, vec![2, 3, 4, 5]);
         assert_eq!(twrr_dr.1, vec![Some(0.0), Some(0.02), Some(1. / 102.), Some(1. / 103.)]);
+        let twrr_cr = rtn.twrr_cr(2, 5).unwrap();
+        assert_eq!(twrr_cr.0, vec![2, 3, 4, 5]);
+        assert::assert_near_eq(&twrr_cr.1, &vec![Some(0.0), Some(0.02), Some(0.03), Some(0.04)]);
     }
 }
