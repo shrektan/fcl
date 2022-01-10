@@ -89,17 +89,57 @@ impl Rtn {
             Err(_) => None,
         }
     }
-    fn twrr_dr(&self, from: RDate, to: RDate) -> Result<(Vec<RDate>, Vec<Option<f64>>), String> {
+    fn dates(from: RDate, to: RDate) -> Vec<RDate> {
+        (from..=to).collect()
+    }
+    fn i_dates(&self, from: RDate, to: RDate) -> Result<Vec<usize>, String> {
         let i_from = self.i(from).ok_or("from is out range")?;
         let i_to = self.i(to).ok_or("to is out range")?;
-        let i_dates: Vec<usize> = (i_from..=i_to).collect();
+        if i_from >= i_to {
+            return Err("from should be smaller than to".to_string());
+        }
+        Ok((i_from..=i_to).collect())
+    }
+    fn twrr_dr(&self, from: RDate, to: RDate) -> Result<(Vec<RDate>, Vec<Option<f64>>), String> {
+        let i_dates = self.i_dates(from, to)?;
         let drs = i_dates.iter().map(|i| self.dr(*i)).collect();
-        let dates: Vec<RDate> = (from..=to).collect();
+        let dates: Vec<RDate> = Self::dates(from, to);
         Ok((dates, drs))
     }
     fn twrr_cr(&self, from: RDate, to: RDate) -> Result<(Vec<RDate>, Vec<Option<f64>>), String> {
         let mut out = self.twrr_dr(from, to)?;
         out.1 = Self::crs(&out.1);
+        Ok(out)
+    }
+    fn weighted_cf(i_dates: &Vec<usize>, cfs: &[f64], i: usize) -> f64 {
+        let i_dates = i_dates.get(0..=i).unwrap();
+        let total_days = i_dates.last().unwrap() - i_dates.first().unwrap();
+        let weights: Vec<f64> = i_dates.iter().map(|i| (i_dates.last().unwrap() - i) as f64 / total_days as f64).collect();
+        let weighted_cf: f64 = cfs.iter().zip(weights).map(|(cf, wt)| cf * wt).sum();
+        weighted_cf
+    }
+    fn dietz_avc(&self, from: RDate, to: RDate) -> Result<Vec<f64>, String> {
+        let i_dates = self.i_dates(from, to)?;
+        let mv0: f64 = *self.mv0(i_dates[0]).ok_or("can't fetch mv0")?;
+        let cfs: Vec<f64>= i_dates.iter().map(|i| self.cf(*i).unwrap_or(0.0) ).collect();
+        let out: Vec<f64> = i_dates.iter().enumerate().map(|(i, _)| {
+            Self::weighted_cf(&i_dates, &cfs, i) + mv0
+        }).collect();
+        Ok(out)
+    }
+    fn dietz(&self, from: RDate, to: RDate) -> Result<Vec<f64>, String> {
+        let i_dates = self.i_dates(from, to)?;
+        let pls: Vec<f64> = i_dates.iter().map(|i| *self.pl(*i).unwrap() ).collect();
+        let mut cum_pls: Vec<f64> = Vec::with_capacity(pls.len());
+        for (i, pl) in pls.iter().enumerate() {
+            if i == 0 {
+                cum_pls.push(*pl);
+            } else {
+                cum_pls.push(cum_pls[i-1] + pl);
+            }
+        }
+        let avcs: Vec<f64> = self.dietz_avc(from, to)?;
+        let out: Vec<f64> = cum_pls.iter().zip(avcs).map(|(pl, avc)| pl / avc).collect();
         Ok(out)
     }
 }
@@ -133,5 +173,16 @@ mod tests {
             twrr_cr.1,
             vec![Some(0.0), Some(0.02), Some(0.03), Some(0.04)]
         );
+    }
+    #[test]
+    fn dietz_ok() {
+        let dates = vec![1, 2, 3, 4];
+        let mvs = vec![100., 102., 103., 104.];
+        let pls = vec![0., 2., 1., 1.];
+        let rtn = Rtn::new(dates, mvs, pls).unwrap();
+        let avc = rtn.dietz_avc(2, 4).unwrap();
+        let dietz = rtn.dietz(2, 4).unwrap();
+        assert_near_eq!(avc, vec![100., 100., 100.]);
+        assert_near_eq!(dietz, vec![0.02, 0.03, 0.04]);
     }
 }
