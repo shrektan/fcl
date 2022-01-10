@@ -4,6 +4,7 @@ mod assert;
 mod bond;
 mod rdate;
 mod rtn;
+use rdate::ToRDate;
 
 fn check_len(x: [&Robj; 2], var: [&str; 2]) {
     if x[0].len() != x[1].len() {
@@ -104,10 +105,9 @@ fn bond_cf(
             None => {}
         }
     }
-    let rdates: Vec<Option<f64>> = dates.iter().map(|v| rdate::to_rdate(&Some(*v))).collect();
     data_frame!(
         ID = ids,
-        DATE = rdate::make_rdate(rdates),
+        DATE = dates.to_rdate(),
         COUPON = cpns,
         REDEM = redems
     )
@@ -212,6 +212,12 @@ impl RRtn {
         let from = from as i32;
         let to = to as i32;
         self.data.dietz(from, to).unwrap()
+    }
+    fn dates(from: f64, to: f64) -> Robj {
+        let from = from as i32;
+        let to = to as i32;
+        let out = rtn::Rtn::dates(from, to).unwrap();
+        out.to_rdate()
     }
 }
 
