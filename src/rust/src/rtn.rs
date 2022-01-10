@@ -2,14 +2,14 @@ use std::collections::BTreeMap;
 
 type RDate = i32;
 
-struct Rtn {
+pub struct Rtn {
     dates: Vec<RDate>,
     mvs: Vec<f64>,
     pls: Vec<f64>,
 }
 
 impl Rtn {
-    fn new(dates: Vec<RDate>, mvs: Vec<f64>, pls: Vec<f64>) -> Result<Self, String> {
+    pub fn new(dates: Vec<RDate>, mvs: Vec<f64>, pls: Vec<f64>) -> Result<Self, String> {
         let n = dates.len();
         if mvs.len() != n {
             return Err("the len of mvs and dates doesn't equal".to_string());
@@ -89,7 +89,7 @@ impl Rtn {
             Err(_) => None,
         }
     }
-    fn dates(from: RDate, to: RDate) -> Result<Vec<RDate>, String> {
+    pub fn dates(from: RDate, to: RDate) -> Result<Vec<RDate>, String> {
         if from >= to {
             return Err("from should be smaller than to".to_string());
         }
@@ -103,12 +103,12 @@ impl Rtn {
         }
         Ok((i_from..=i_to).collect())
     }
-    fn twrr_dr(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
+    pub fn twrr_dr(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
         let i_dates = self.i_dates(from, to)?;
         let drs = i_dates.iter().map(|i| self.dr(*i)).collect();
         Ok(drs)
     }
-    fn twrr_cr(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
+    pub fn twrr_cr(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
         let mut out = self.twrr_dr(from, to)?;
         out = Self::crs(&out);
         Ok(out)
@@ -123,7 +123,7 @@ impl Rtn {
         let weighted_cf: f64 = cfs.iter().zip(weights).map(|(cf, wt)| cf * wt).sum();
         weighted_cf
     }
-    fn dietz_avc(&self, from: RDate, to: RDate) -> Result<Vec<f64>, String> {
+    pub fn dietz_avc(&self, from: RDate, to: RDate) -> Result<Vec<f64>, String> {
         let i_dates = self.i_dates(from, to)?;
         let mv0: f64 = *self.mv0(i_dates[0]).ok_or("can't fetch mv0")?;
         let cfs: Vec<f64> = i_dates.iter().map(|i| self.cf(*i).unwrap_or(0.0)).collect();
@@ -134,7 +134,7 @@ impl Rtn {
             .collect();
         Ok(out)
     }
-    fn dietz(&self, from: RDate, to: RDate) -> Result<Vec<f64>, String> {
+    pub fn dietz(&self, from: RDate, to: RDate) -> Result<Vec<f64>, String> {
         let i_dates = self.i_dates(from, to)?;
         let pls: Vec<f64> = i_dates.iter().map(|i| *self.pl(*i).unwrap()).collect();
         let mut cum_pls: Vec<f64> = Vec::with_capacity(pls.len());
