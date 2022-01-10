@@ -89,8 +89,11 @@ impl Rtn {
             Err(_) => None,
         }
     }
-    fn dates(from: RDate, to: RDate) -> Vec<RDate> {
-        (from..=to).collect()
+    fn dates(from: RDate, to: RDate) -> Result<Vec<RDate>, String> {
+        if from >= to {
+            return Err("from should be smaller than to".to_string());
+        }
+        Ok((from..=to).collect())
     }
     fn i_dates(&self, from: RDate, to: RDate) -> Result<Vec<usize>, String> {
         let i_from = self.i(from).ok_or("from is out range")?;
@@ -100,15 +103,14 @@ impl Rtn {
         }
         Ok((i_from..=i_to).collect())
     }
-    fn twrr_dr(&self, from: RDate, to: RDate) -> Result<(Vec<RDate>, Vec<Option<f64>>), String> {
+    fn twrr_dr(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
         let i_dates = self.i_dates(from, to)?;
         let drs = i_dates.iter().map(|i| self.dr(*i)).collect();
-        let dates: Vec<RDate> = Self::dates(from, to);
-        Ok((dates, drs))
+        Ok(drs)
     }
-    fn twrr_cr(&self, from: RDate, to: RDate) -> Result<(Vec<RDate>, Vec<Option<f64>>), String> {
+    fn twrr_cr(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
         let mut out = self.twrr_dr(from, to)?;
-        out.1 = Self::crs(&out.1);
+        out = Self::crs(&out);
         Ok(out)
     }
     fn weighted_cf(i_dates: &Vec<usize>, cfs: &[f64], i: usize) -> f64 {
@@ -155,22 +157,23 @@ mod tests {
         let pls = vec![0., 2., 1., 1.];
         let rtn = Rtn::new(dates, mvs, pls).unwrap();
 
+        let twrr_dates = Rtn::dates(1, 5).unwrap();
         let twrr_cr = rtn.twrr_cr(1, 5).unwrap();
-        assert_eq!(twrr_cr.0, vec![1, 2, 3, 4, 5]);
-        assert_eq!(twrr_cr.1, vec![None, None, None, None, None]);
-        assert_eq!(rtn.mvs, vec![100., 100., 102., 103., 104.]);
+        assert_eq!(twrr_dates, vec![1, 2, 3, 4, 5]);
+        assert_eq!(twrr_cr, vec![None, None, None, None, None]);
+        assert_near_eq!(rtn.mvs, vec![100., 100., 102., 103., 104.]);
         assert_near_eq!(rtn.pls, vec![0., 0., 2., 1., 1.]);
 
+        let twrr_dates = Rtn::dates(2, 5).unwrap();
         let twrr_dr = rtn.twrr_dr(2, 5).unwrap();
-        assert_eq!(twrr_dr.0, vec![2, 3, 4, 5]);
-        assert_eq!(
-            twrr_dr.1,
+        assert_eq!(twrr_dates, vec![2, 3, 4, 5]);
+        assert_near_eq!(
+            twrr_dr,
             vec![Some(0.0), Some(0.02), Some(1. / 102.), Some(1. / 103.)]
         );
         let twrr_cr = rtn.twrr_cr(2, 5).unwrap();
-        assert_eq!(twrr_cr.0, vec![2, 3, 4, 5]);
         assert_near_eq!(
-            twrr_cr.1,
+            twrr_cr,
             vec![Some(0.0), Some(0.02), Some(0.03), Some(0.04)]
         );
     }
