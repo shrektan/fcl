@@ -6,7 +6,7 @@ const R_DATE_FROM_CE: i32 = 719163;
 
 pub fn robj2date(x: Robj, var: &str) -> Result<Vec<Option<NaiveDate>>> {
     if !x.inherits("Date") {
-        return Result::Err(Error::Other(format!("{} is not a Date", var)));
+        return Err(Error::Other(format!("{} is not a Date", var)));
     }
     let out = match x.rtype() {
         RType::Real => x
@@ -32,13 +32,13 @@ pub fn robj2date(x: Robj, var: &str) -> Result<Vec<Option<NaiveDate>>> {
             })
             .collect(),
         _ => {
-            return Result::Err(Error::Other(format!(
+            return Err(Error::Other(format!(
                 "{} is Date but the type is not integer or double",
                 var
             )));
         }
     };
-    Result::Ok(out)
+    Ok(out)
 }
 
 fn date2rnum(x: &NaiveDate) -> f64 {
