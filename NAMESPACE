@@ -3,4 +3,5 @@
 S3method("$",RRtn)
 export(bond_cf)
 export(bond_result)
+importFrom(ymd,ymd)
 useDynLib(fcl, .registration = TRUE)
