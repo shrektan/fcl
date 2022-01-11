@@ -7,9 +7,11 @@
 create_rtn(ids, dates, mvs, pls)
 }
 \arguments{
-\item{ids}{an integer vector, the ID each row belongs to}
+\item{ids}{an integer vector, the ID of each row belongs to}
 
-\item{dates}{a Date vector, the}
+\item{dates}{a Date vector, the reference date of each row}
+
+\item{mvs, pls}{a Double vector, the market value and the PnL of each day}
 }
 \description{
 By providing a "group" (\code{ids}) of \code{dates}, \code{mvs} and \code{pls},
