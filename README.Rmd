@@ -31,21 +31,27 @@ You'll need the rust toolchain to compile this package from source.
 ```{r example}
 library(fcl)
 ## basic example code
-ymd <- function(...) as.Date(as.character(list(...)))
+ymd <- ymd::ymd
 bond_result(
-  ymd("2021-01-01", "2021-02-01"),
-  ymd("2025-01-01", "2030-02-01"),
+  ymd(c(210101, 210101)),
+  ymd(c(250101, 300201)),
   c(100.0, 100.0),
   c(0.05, 0.03),
   c(0L, 1L),
-  ymd("2022-01-01", "2022-02-01"),
+  ymd(c(220101, 220201)),
   c(100, 100)
 )
 bond_cf(
-  ymd("2021-01-01", "2021-02-01"),
-  ymd("2025-01-01", "2030-02-01"),
+  ymd(c(210101, 210201)),
+  ymd(c(250101, 300201)),
   c(100.0, 100.0),
   c(0.05, 0.03),
-  c(0L, 1L)
+  c(0L, 1L),
+  ymd(c(220101, 220131))
 )
+rtn <- create_rtn(c(1, 1, 1), ymd(c(210101, 210105, 210110)), c(100, 103, 110), c(0, 3, 7))
+rtn$twrr_cr(1, ymd(210102), ymd(210110))
+rtn$twrr_dr(1, ymd(210102), ymd(210110))
+rtn$dietz(1, ymd(210102), ymd(210110))
+rtn$dietz_avc(1, ymd(210102), ymd(210110))
 ```
