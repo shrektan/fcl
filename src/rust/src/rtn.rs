@@ -225,4 +225,28 @@ mod tests {
         assert_near_eq!(avc, vec![Some(100.), Some(100.), Some(100.), Some(100.)]);
         assert_near_eq!(dietz, vec![Some(0.0), Some(0.02), Some(0.03), Some(0.04)]);
     }
+    #[test]
+    fn dietz_ok2() {
+        let dates = vec![0, 50, 100];
+        let mvs = vec![100., 205., 305.];
+        let pls = vec![0., 5., 0.];
+        let rtn = Rtn::new(dates, mvs, pls).unwrap();
+
+        let avc = rtn.dietz_avc(1, 100).unwrap();
+        let avc_n: Option<f64> = *avc.last().unwrap();
+        assert_eq!(avc_n.unwrap(), 150.);
+        let dietz = rtn.dietz(1, 50).unwrap();
+        let dietz_n: Option<f64> = *dietz.last().unwrap();
+        assert_eq!(dietz_n.unwrap(), 0.05);
+
+        let avc = rtn.dietz_avc(51, 100).unwrap();
+        let avc_n: Option<f64> = *avc.last().unwrap();
+        assert_eq!(avc_n.unwrap(), 205.);
+        let avc = rtn.dietz_avc(1, 100).unwrap();
+        let avc_n: Option<f64> = *avc.last().unwrap();
+        assert_eq!(avc_n.unwrap(), 150.);
+        let dietz = rtn.dietz(51, 100).unwrap();
+        let dietz_n: Option<f64> = *dietz.last().unwrap();
+        assert_eq!(dietz_n.unwrap(), 0.);
+    }
 }
