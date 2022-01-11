@@ -203,12 +203,12 @@ impl RRtn {
         let to = to as i32;
         self.data.twrr_cr(from, to).unwrap()
     }
-    fn dietz_avc(&self, from: f64, to: f64) -> Vec<f64> {
+    fn dietz_avc(&self, from: f64, to: f64) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;
         self.data.dietz_avc(from, to).unwrap()
     }
-    fn dietz(&self, from: f64, to: f64) -> Vec<f64> {
+    fn dietz(&self, from: f64, to: f64) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;
         self.data.dietz(from, to).unwrap()

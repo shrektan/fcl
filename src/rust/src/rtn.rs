@@ -90,16 +90,16 @@ impl Rtn {
         }
     }
     pub fn dates(from: RDate, to: RDate) -> Result<Vec<RDate>, String> {
-        if from >= to {
-            return Err("from should be smaller than to".to_string());
+        if from > to {
+            return Err("from should be equal or smaller than to".to_string());
         }
         Ok((from..=to).collect())
     }
     fn i_dates(&self, from: RDate, to: RDate) -> Result<Vec<usize>, String> {
         let i_from = self.i(from).ok_or("from is out range")?;
         let i_to = self.i(to).ok_or("to is out range")?;
-        if i_from >= i_to {
-            return Err("from should be smaller than to".to_string());
+        if i_from > i_to {
+            return Err("from should be equal or smaller than to".to_string());
         }
         Ok((i_from..=i_to).collect())
     }
@@ -113,40 +113,74 @@ impl Rtn {
         out = Self::crs(&out);
         Ok(out)
     }
-    fn weighted_cf(i_dates: &Vec<usize>, cfs: &[f64], i: usize) -> f64 {
+    fn weighted_cf(i_dates: &[usize], cfs: &[Option<f64>], i: usize) -> Option<f64> {
+        if i_dates.len() != cfs.len() {
+            panic!("the len of i_dates and cfs doesn't equal");
+        }
+        let any_na: bool = cfs.iter().any(|x| x.is_none());
+        if any_na {
+            return None;
+        }
         let i_dates = i_dates.get(0..=i).unwrap();
         let total_days = i_dates.last().unwrap() - i_dates.first().unwrap();
         let weights: Vec<f64> = i_dates
             .iter()
             .map(|i| (i_dates.last().unwrap() - i) as f64 / total_days as f64)
             .collect();
-        let weighted_cf: f64 = cfs.iter().zip(weights).map(|(cf, wt)| cf * wt).sum();
-        weighted_cf
+        let weighted_cf: f64 = cfs
+            .iter()
+            .zip(weights)
+            .map(|(cf, wt)| cf.unwrap() * wt)
+            .sum();
+        Some(weighted_cf)
     }
-    pub fn dietz_avc(&self, from: RDate, to: RDate) -> Result<Vec<f64>, String> {
+    pub fn dietz_avc(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
         let i_dates = self.i_dates(from, to)?;
         let mv0: f64 = *self.mv0(i_dates[0]).ok_or("can't fetch mv0")?;
-        let cfs: Vec<f64> = i_dates.iter().map(|i| self.cf(*i).unwrap_or(0.0)).collect();
-        let out: Vec<f64> = i_dates
+        let cfs: Vec<Option<f64>> = i_dates.iter().map(|i| self.cf(*i)).collect();
+        let out: Vec<Option<f64>> = i_dates
             .iter()
             .enumerate()
-            .map(|(i, _)| Self::weighted_cf(&i_dates, &cfs, i) + mv0)
+            .map(|(i, _)| match Self::weighted_cf(&i_dates, &cfs, i) {
+                Some(v) => Some(v + mv0),
+                None => None,
+            })
             .collect();
         Ok(out)
     }
-    pub fn dietz(&self, from: RDate, to: RDate) -> Result<Vec<f64>, String> {
+    pub fn dietz(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
         let i_dates = self.i_dates(from, to)?;
-        let pls: Vec<f64> = i_dates.iter().map(|i| *self.pl(*i).unwrap()).collect();
-        let mut cum_pls: Vec<f64> = Vec::with_capacity(pls.len());
+        let pls: Vec<Option<f64>> = i_dates
+            .iter()
+            .map(|i| match self.pl(*i) {
+                Some(v) => Some(*v),
+                None => None,
+            })
+            .collect();
+        let mut cum_pls: Vec<Option<f64>> = Vec::with_capacity(pls.len());
         for (i, pl) in pls.iter().enumerate() {
             if i == 0 {
                 cum_pls.push(*pl);
             } else {
-                cum_pls.push(cum_pls[i - 1] + pl);
+                match (pl, cum_pls[i - 1]) {
+                    (Some(v), Some(v0)) => {
+                        cum_pls.push(Some(v0 + v));
+                    }
+                    _ => {
+                        cum_pls.push(None);
+                    }
+                }
             }
         }
-        let avcs: Vec<f64> = self.dietz_avc(from, to)?;
-        let out: Vec<f64> = cum_pls.iter().zip(avcs).map(|(pl, avc)| pl / avc).collect();
+        let avcs: Vec<Option<f64>> = self.dietz_avc(from, to)?;
+        let out: Vec<Option<f64>> = cum_pls
+            .iter()
+            .zip(avcs)
+            .map(|(pl, avc)| match (pl, avc) {
+                (Some(pl), Some(avc)) => Some(pl / avc),
+                _ => None,
+            })
+            .collect();
         Ok(out)
     }
 }
@@ -187,7 +221,7 @@ mod tests {
         let rtn = Rtn::new(dates, mvs, pls).unwrap();
         let avc = rtn.dietz_avc(2, 4).unwrap();
         let dietz = rtn.dietz(2, 4).unwrap();
-        assert_near_eq!(avc, vec![100., 100., 100.]);
-        assert_near_eq!(dietz, vec![0.02, 0.03, 0.04]);
+        assert_near_eq!(avc, vec![Some(100.), Some(100.), Some(100.)]);
+        assert_near_eq!(dietz, vec![Some(0.02), Some(0.03), Some(0.04)]);
     }
 }
