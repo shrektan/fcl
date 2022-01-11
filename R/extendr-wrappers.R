@@ -24,9 +24,15 @@ bond_cf <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_d
 
 RRtn <- new.env(parent = emptyenv())
 
-RRtn$new <- function(dates, mvs, pls) .Call(wrap__RRtn__new, dates, mvs, pls)
+RRtn$new <- function(ids, dates, mvs, pls) .Call(wrap__RRtn__new, ids, dates, mvs, pls)
 
-RRtn$twrr <- function(from, to) .Call(wrap__RRtn__twrr, self, from, to)
+RRtn$twrr <- function(id, from, to) .Call(wrap__RRtn__twrr, self, id, from, to)
+
+RRtn$dietz_avc <- function(id, from, to) .Call(wrap__RRtn__dietz_avc, self, id, from, to)
+
+RRtn$dietz <- function(id, from, to) .Call(wrap__RRtn__dietz, self, id, from, to)
+
+RRtn$dates <- function(from, to) .Call(wrap__RRtn__dates, from, to)
 
 #' @export
 `$.RRtn` <- function (self, name) { func <- RRtn[[name]]; environment(func) <- environment(); func }
