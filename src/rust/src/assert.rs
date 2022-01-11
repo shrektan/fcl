@@ -7,6 +7,9 @@ pub trait NearEq {
 impl NearEq for Vec<Option<f64>> {
     fn near_equal(&self, right: &Self) -> bool {
         let left = &self;
+        if left.len() != right.len() {
+            return false;
+        }
         let mut failed = false;
         for (i, left_val) in left.iter().enumerate() {
             match (left_val, right[i]) {
@@ -31,6 +34,9 @@ impl NearEq for Vec<Option<f64>> {
 impl NearEq for Vec<f64> {
     fn near_equal(&self, right: &Self) -> bool {
         let left = &self;
+        if left.len() != right.len() {
+            return false;
+        }
         let mut failed = false;
         for (i, left_val) in left.iter().enumerate() {
             // l or r could be NaN or infinite
@@ -77,6 +83,20 @@ mod tests {
     fn test_fail() {
         let x: Vec<f64> = vec![1., 2., 3.];
         let y: Vec<f64> = vec![1., 2., 4.];
+        assert_near_eq!(x, y);
+    }
+    #[test]
+    #[should_panic(expected = "assert near equal failed")]
+    fn test_fail_len() {
+        let x: Vec<f64> = vec![1.];
+        let y: Vec<f64> = vec![1., 2., 4.];
+        assert_near_eq!(x, y);
+    }
+    #[test]
+    #[should_panic(expected = "assert near equal failed")]
+    fn test_fail_opt_len() {
+        let x: Vec<Option<f64>> = vec![Some(1.)];
+        let y: Vec<Option<f64>> = vec![Some(1.), Some(2.), Some(4.)];
         assert_near_eq!(x, y);
     }
     #[test]
