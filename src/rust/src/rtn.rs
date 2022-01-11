@@ -117,12 +117,13 @@ impl Rtn {
         if i_dates.len() != cfs.len() {
             panic!("the len of i_dates and cfs doesn't equal");
         }
+        let i_dates = i_dates.get(0..=i).unwrap();
+        let cfs = cfs.get(0..=i).unwrap();
         let any_na: bool = cfs.iter().any(|x| x.is_none());
         if any_na {
             return None;
         }
-        let i_dates = i_dates.get(0..=i).unwrap();
-        let total_days = i_dates.last().unwrap() - i_dates.first().unwrap();
+        let total_days = i_dates.last().unwrap() - i_dates.first().unwrap() + 1;
         let weights: Vec<f64> = i_dates
             .iter()
             .map(|i| (i_dates.last().unwrap() - i) as f64 / total_days as f64)
@@ -215,13 +216,13 @@ mod tests {
     }
     #[test]
     fn dietz_ok() {
-        let dates = vec![1, 2, 3, 4];
+        let dates = vec![0, 5, 6, 7];
         let mvs = vec![100., 102., 103., 104.];
         let pls = vec![0., 2., 1., 1.];
         let rtn = Rtn::new(dates, mvs, pls).unwrap();
-        let avc = rtn.dietz_avc(2, 4).unwrap();
-        let dietz = rtn.dietz(2, 4).unwrap();
-        assert_near_eq!(avc, vec![Some(100.), Some(100.), Some(100.)]);
-        assert_near_eq!(dietz, vec![Some(0.02), Some(0.03), Some(0.04)]);
+        let avc = rtn.dietz_avc(4, 7).unwrap();
+        let dietz = rtn.dietz(4, 7).unwrap();
+        assert_near_eq!(avc, vec![Some(100.), Some(100.), Some(100.), Some(100.)]);
+        assert_near_eq!(dietz, vec![Some(0.0), Some(0.02), Some(0.03), Some(0.04)]);
     }
 }
