@@ -193,7 +193,12 @@ struct RRtn {
 impl RRtn {
     fn new(ids: Robj, dates: Robj, mvs: Robj, pls: Robj) -> Self {
         let ids: Vec<i32> = ids.as_integer_vector().unwrap();
-        let dates: Vec<i32> = dates.as_real_vector().unwrap().iter().map(|v| *v as i32).collect();
+        let dates: Vec<i32> = dates
+            .as_real_vector()
+            .unwrap()
+            .iter()
+            .map(|v| *v as i32)
+            .collect();
         let mvs: Vec<f64> = mvs.as_real_vector().unwrap();
         let pls: Vec<f64> = pls.as_real_vector().unwrap();
         struct Raw {
