@@ -5,6 +5,7 @@ mod bond;
 mod rdate;
 mod rtn;
 use rdate::ToRDate;
+use std::collections::BTreeMap;
 
 fn check_len(x: [&Robj; 2], var: [&str; 2]) {
     if x[0].len() != x[1].len() {
@@ -185,33 +186,63 @@ fn bond_result(
 
 #[extendr]
 struct RRtn {
-    data: rtn::Rtn,
+    data: BTreeMap<i32, rtn::Rtn>,
 }
 
 #[extendr]
 impl RRtn {
-    fn new(dates: Robj, mvs: Robj, pls: Robj) -> Self {
+    fn new(ids: Robj, dates: Robj, mvs: Robj, pls: Robj) -> Self {
+        let ids: Vec<i32> = ids.as_integer_vector().unwrap();
         let dates: Vec<i32> = dates.as_integer_vector().unwrap();
         let mvs: Vec<f64> = mvs.as_real_vector().unwrap();
         let pls: Vec<f64> = pls.as_real_vector().unwrap();
-        RRtn {
-            data: rtn::Rtn::new(dates, mvs, pls).unwrap(),
+        struct Raw {
+            dates: Vec<i32>,
+            mvs: Vec<f64>,
+            pls: Vec<f64>,
         }
+        impl Raw {
+            fn new() -> Self {
+                Raw {
+                    dates: Vec::new(),
+                    mvs: Vec::new(),
+                    pls: Vec::new(),
+                }
+            }
+            fn to_rtn(&self) -> rtn::Rtn {
+                rtn::Rtn::new(self.dates.clone(), self.mvs.clone(), self.pls.clone()).unwrap()
+            }
+        }
+        let mut raw: BTreeMap<i32, Raw> = BTreeMap::new();
+        for (i, id) in ids.iter().enumerate() {
+            if !raw.contains_key(id) {
+                raw.insert(*id, Raw::new());
+            }
+            let x = raw.get_mut(id).unwrap();
+            x.dates.push(dates[i]);
+            x.mvs.push(mvs[i]);
+            x.pls.push(pls[i]);
+        }
+        let mut data: BTreeMap<i32, rtn::Rtn> = BTreeMap::new();
+        for (id, val) in raw.iter() {
+            data.insert(*id, val.to_rtn());
+        }
+        RRtn { data: data }
     }
-    fn twrr(&self, from: f64, to: f64) -> Vec<Option<f64>> {
+    fn twrr(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;
-        self.data.twrr_cr(from, to).unwrap()
+        self.data.get(&id).unwrap().twrr_cr(from, to).unwrap()
     }
-    fn dietz_avc(&self, from: f64, to: f64) -> Vec<Option<f64>> {
+    fn dietz_avc(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;
-        self.data.dietz_avc(from, to).unwrap()
+        self.data.get(&id).unwrap().dietz_avc(from, to).unwrap()
     }
-    fn dietz(&self, from: f64, to: f64) -> Vec<Option<f64>> {
+    fn dietz(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;
-        self.data.dietz(from, to).unwrap()
+        self.data.get(&id).unwrap().dietz(from, to).unwrap()
     }
     fn dates(from: f64, to: f64) -> Robj {
         let from = from as i32;
