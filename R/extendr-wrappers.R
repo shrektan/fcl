@@ -26,7 +26,9 @@ RRtn <- new.env(parent = emptyenv())
 
 RRtn$new <- function(ids, dates, mvs, pls) .Call(wrap__RRtn__new, ids, dates, mvs, pls)
 
-RRtn$twrr <- function(id, from, to) .Call(wrap__RRtn__twrr, self, id, from, to)
+RRtn$twrr_cr <- function(id, from, to) .Call(wrap__RRtn__twrr_cr, self, id, from, to)
+
+RRtn$twrr_dr <- function(id, from, to) .Call(wrap__RRtn__twrr_dr, self, id, from, to)
 
 RRtn$dietz_avc <- function(id, from, to) .Call(wrap__RRtn__dietz_avc, self, id, from, to)
 

@@ -193,7 +193,7 @@ struct RRtn {
 impl RRtn {
     fn new(ids: Robj, dates: Robj, mvs: Robj, pls: Robj) -> Self {
         let ids: Vec<i32> = ids.as_integer_vector().unwrap();
-        let dates: Vec<i32> = dates.as_integer_vector().unwrap();
+        let dates: Vec<i32> = dates.as_real_vector().unwrap().iter().map(|v| *v as i32).collect();
         let mvs: Vec<f64> = mvs.as_real_vector().unwrap();
         let pls: Vec<f64> = pls.as_real_vector().unwrap();
         struct Raw {
@@ -229,10 +229,15 @@ impl RRtn {
         }
         RRtn { data: data }
     }
-    fn twrr(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
+    fn twrr_cr(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;
         self.data.get(&id).unwrap().twrr_cr(from, to).unwrap()
+    }
+    fn twrr_dr(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
+        let from = from as i32;
+        let to = to as i32;
+        self.data.get(&id).unwrap().twrr_dr(from, to).unwrap()
     }
     fn dietz_avc(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
         let from = from as i32;
