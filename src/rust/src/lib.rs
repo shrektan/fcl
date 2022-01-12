@@ -8,18 +8,6 @@ mod rtn;
 use rdate::ToRDate;
 use std::collections::BTreeMap;
 
-fn check_len(x: [&Robj; 2], var: [&str; 2]) {
-    if x[0].len() != x[1].len() {
-        panic!(
-            "the length of {}({}) and {}({}) differs",
-            var[0],
-            x[0].len(),
-            var[1],
-            x[1].len()
-        )
-    }
-}
-
 fn make_bond(
     value_date: Robj,
     mty_date: Robj,
@@ -28,11 +16,7 @@ fn make_bond(
     cpn_freq: Robj,
 ) -> Vec<Option<bond::FixedBond>> {
     let n = value_date.len();
-    check_len([&value_date, &mty_date], ["value_date", "mty_date"]);
-    check_len([&value_date, &redem_value], ["value_date", "redem_value"]);
-    check_len([&value_date, &cpn_rate], ["value_date", "cpn_rate"]);
-    check_len([&value_date, &cpn_freq], ["value_date", "cpn_freq"]);
-
+    check_len!(value_date, mty_date, redem_value, cpn_rate, cpn_freq);
     let value_date = rdate::robj2date(value_date, "value_date").unwrap();
     let mty_date = rdate::robj2date(mty_date, "mty_date").unwrap();
     let redem_value = redem_value
@@ -80,7 +64,7 @@ fn bond_cf(
     cpn_freq: Robj,
     ref_date: Robj,
 ) -> Robj {
-    check_len([&value_date, &ref_date], ["value_date", "ref_date"]);
+    check_len!(value_date, ref_date);
     let ref_date = rdate::robj2date(ref_date, "ref_date").unwrap();
     let bonds = make_bond(value_date, mty_date, redem_value, cpn_rate, cpn_freq);
     let mut ids: Vec<i32> = Vec::new();
@@ -132,8 +116,7 @@ fn bond_result(
     ref_date: Robj,
     clean_price: Robj,
 ) -> Robj {
-    check_len([&value_date, &ref_date], ["value_date", "ref_date"]);
-    check_len([&value_date, &clean_price], ["value_date", "clean_price"]);
+    check_len!(value_date, ref_date, clean_price);
     let ref_date = rdate::robj2date(ref_date, "ref_date").unwrap();
     let clean_price = clean_price
         .as_real_slice()
@@ -193,6 +176,7 @@ struct RRtn {
 #[extendr]
 impl RRtn {
     fn new(ids: Robj, dates: Robj, mvs: Robj, pls: Robj) -> Self {
+        check_len!(ids, dates, mvs, pls);
         let ids: Vec<i32> = ids.as_integer_vector().unwrap();
         let dates: Vec<i32> = dates
             .as_real_vector()

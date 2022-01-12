@@ -10,13 +10,7 @@ pub struct Rtn {
 
 impl Rtn {
     pub fn new(dates: Vec<RDate>, mvs: Vec<f64>, pls: Vec<f64>) -> Result<Self, String> {
-        let n = dates.len();
-        if mvs.len() != n {
-            return Err("the len of mvs and dates doesn't equal".to_string());
-        }
-        if pls.len() != n {
-            return Err("the len of pls and dates doesn't equal".to_string());
-        }
+        check_len!(dates, mvs, pls);
         let mut data: BTreeMap<RDate, (f64, f64)> = BTreeMap::new();
         for (i, date) in dates.iter().enumerate() {
             if data.contains_key(&date) {
