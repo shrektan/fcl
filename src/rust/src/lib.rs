@@ -2,6 +2,7 @@ use chrono::NaiveDate;
 use extendr_api::prelude::*;
 mod assert;
 mod bond;
+mod check_len;
 mod rdate;
 mod rtn;
 use rdate::ToRDate;
