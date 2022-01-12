@@ -53,7 +53,7 @@ impl NearEq for Vec<f64> {
 
 #[macro_export]
 macro_rules! assert_near_eq {
-    ($left:expr, $right:expr $(,)?) => {{
+    ($left:expr, $right:expr $(,)?) => {
         match (&$left, &$right) {
             (left_val, right_val) => {
                 if !(left_val.near_equal(right_val)) {
@@ -64,7 +64,7 @@ macro_rules! assert_near_eq {
                 }
             }
         }
-    }};
+    };
 }
 
 #[cfg(test)]
