@@ -229,6 +229,11 @@ impl RRtn {
         let to = to as i32;
         self.data.get(&id).unwrap().twrr_dr(from, to).unwrap()
     }
+    fn cum_pl(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
+        let from = from as i32;
+        let to = to as i32;
+        self.data.get(&id).unwrap().cum_pl(from, to).unwrap()
+    }
     fn dietz_avc(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;

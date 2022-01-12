@@ -1,3 +1,6 @@
+#' @export
+`[[.RRtn` <- `$.RRtn`
+
 #' Create Rtn Object
 #'
 #' By providing a "group" (`ids`) of `dates`, `mvs` and `pls`,
@@ -23,33 +26,16 @@ create_rtn <- function(ids, dates, mvs, pls) {
   }
   out <- new.env()
   out$.self <- obj
-  out$twrr_cr <- function(id, from, to) {
-    .self <- out$.self
-    xts::xts(
-      .self$twrr_cr(as.integer(id), from, to),
-      .self$dates(from, to)
-    )
-  }
-  out$twrr_dr <- function(id, from, to) {
-    .self <- out$.self
-    xts::xts(
-      .self$twrr_dr(as.integer(id), from, to),
-      .self$dates(from, to)
-    )
-  }
-  out$dietz <- function(id, from, to) {
-    .self <- out$.self
-    xts::xts(
-      .self$dietz(as.integer(id), from, to),
-      .self$dates(from, to)
-    )
-  }
-  out$dietz_avc <- function(id, from, to) {
-    .self <- out$.self
-    xts::xts(
-      .self$dietz_avc(as.integer(id), from, to),
-      .self$dates(from, to)
-    )
-  }
+  vars <- c("twrr_cr", "twrr_dr", "dietz", "dietz_avc", "cum_pl")
+  lapply(vars, function(var) {
+    fun <- function(id, from, to) {
+      .self <- out$.self
+      xts::xts(
+        .self[[var]](as.integer(id), from, to),
+        .self$dates(from, to)
+      )
+    }
+    assign(var, fun, envir = out)
+  })
   out
 }

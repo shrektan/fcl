@@ -143,7 +143,7 @@ impl Rtn {
             .collect();
         Ok(out)
     }
-    pub fn dietz(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
+    pub fn cum_pl(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
         let i_dates = self.i_dates(from, to)?;
         let pls: Vec<Option<f64>> = i_dates
             .iter()
@@ -167,6 +167,10 @@ impl Rtn {
                 }
             }
         }
+        Ok(cum_pls)
+    }
+    pub fn dietz(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
+        let cum_pls = self.cum_pl(from, to)?;
         let avcs: Vec<Option<f64>> = self.dietz_avc(from, to)?;
         let out: Vec<Option<f64>> = cum_pls
             .iter()

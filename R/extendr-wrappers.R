@@ -30,6 +30,8 @@ RRtn$twrr_cr <- function(id, from, to) .Call(wrap__RRtn__twrr_cr, self, id, from
 
 RRtn$twrr_dr <- function(id, from, to) .Call(wrap__RRtn__twrr_dr, self, id, from, to)
 
+RRtn$cum_pl <- function(id, from, to) .Call(wrap__RRtn__cum_pl, self, id, from, to)
+
 RRtn$dietz_avc <- function(id, from, to) .Call(wrap__RRtn__dietz_avc, self, id, from, to)
 
 RRtn$dietz <- function(id, from, to) .Call(wrap__RRtn__dietz, self, id, from, to)
