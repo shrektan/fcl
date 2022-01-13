@@ -122,14 +122,18 @@ impl Rtn {
             return None;
         }
         let total_days = i_dates.last().unwrap() - i_dates.first().unwrap() + 1;
-        let weights: Vec<f64> = i_dates
-            .iter()
-            .map(|i| (i_dates.last().unwrap() - i) as f64 / total_days as f64)
-            .collect();
         let weighted_cf: f64 = cfs
             .iter()
-            .zip(weights)
-            .map(|(cf, wt)| cf.unwrap() * wt)
+            .zip(i_dates)
+            .map(|(cf, i)| {
+                let cf = cf.unwrap();
+                // this is the same handling as twrr dr. when cf is positive, it assumes it happens at
+                // the BOP of the day. when it's negative, EOP. This makes the calculation more robust,
+                // as it reduces the chance that the denominator is close to zero.
+                let wt: f64 =
+                    (i_dates.last().unwrap() - i + (cf > 0.0) as usize) as f64 / total_days as f64;
+                cf * wt
+            })
             .sum();
         Some(weighted_cf)
     }
@@ -239,33 +243,34 @@ mod tests {
 
         let avc = rtn.dietz_avc(1, 100).unwrap();
         let avc_n: Option<f64> = *avc.last().unwrap();
-        assert_eq!(avc_n.unwrap(), 150.);
+        assert_eq!(avc_n.unwrap(), 100. + 100.*51./100. + 100.*1./100.);
         let dietz = rtn.dietz(1, 50).unwrap();
         let dietz_n: Option<f64> = *dietz.last().unwrap();
-        assert_eq!(dietz_n.unwrap(), 0.05);
+        assert_eq!(dietz_n.unwrap(), 5. / (100. + 100./50.));
 
         let avc = rtn.dietz_avc(51, 100).unwrap();
         let avc_n: Option<f64> = *avc.last().unwrap();
-        assert_eq!(avc_n.unwrap(), 205.);
-        let avc = rtn.dietz_avc(1, 100).unwrap();
-        let avc_n: Option<f64> = *avc.last().unwrap();
-        assert_eq!(avc_n.unwrap(), 150.);
+        assert_eq!(avc_n.unwrap(), 205. + 100.*1./50.);
         let dietz = rtn.dietz(51, 100).unwrap();
         let dietz_n: Option<f64> = *dietz.last().unwrap();
         assert_eq!(dietz_n.unwrap(), 0.);
     }
     #[test]
     fn ok_with_zero_begin() {
-        let dates = vec![-1, 0, 1, 50, 100];
-        let mvs = vec![0., 0., 100., 205., 305.];
-        let pls = vec![0., 0., 0., 5., 0.];
+        let dates = vec![-1, 0, 1, 2, 50, 100];
+        let mvs = vec![0., 0., 110., 50., 205., 305.];
+        let pls = vec![0., 0., 10., 5., 0., 0.];
         let rtn = Rtn::new(dates, mvs, pls).unwrap();
-        let avc = rtn.dietz_avc(1, 1).unwrap();
-        let dietz = rtn.dietz(1, 1).unwrap();
-        let twdr = rtn.twrr_dr(0, 1).unwrap();
         assert_eq!(rtn.cf(2).unwrap(), 100.);
-        assert_eq!(avc, vec![Some(0.)]);
+        let avc = rtn.dietz_avc(1, 1).unwrap();
+        assert_eq!(avc, vec![Some(100.)]);
+        let dietz = rtn.dietz(0, 0).unwrap();
         assert_eq!(dietz, vec![None]);
-        assert_eq!(twdr, vec![None, Some(0.)]);
+        let dietz = rtn.dietz(1, 1).unwrap();
+        assert_eq!(dietz, vec![Some(0.1)]);
+        let twdr = rtn.twrr_dr(0, 1).unwrap();
+        assert_eq!(twdr, vec![None, Some(0.1)]);
+        let avc = rtn.dietz_avc(2, 2).unwrap();
+        assert_eq!(avc, vec![Some(110.)]);
     }
 }
