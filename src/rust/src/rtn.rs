@@ -58,8 +58,12 @@ impl Rtn {
     }
     fn dr(&self, i: usize) -> Option<f64> {
         let cf = self.cf(i)?;
-        let deno = if cf >= 0.0 { cf } else { 0.0 };
-        Some(self.pl(i)? / (self.mv0(i)? + deno))
+        let cf_use = if cf >= 0.0 { cf } else { 0.0 };
+        let deno = self.mv0(i)? + cf_use;
+        match deno.classify() {
+            std::num::FpCategory::Normal => Some(self.pl(i)? / deno),
+            _ => None,
+        }
     }
     fn crs(drs: &Vec<Option<f64>>) -> Vec<Option<f64>> {
         let mut out: Vec<Option<f64>> = Vec::with_capacity(drs.len());
@@ -176,7 +180,10 @@ impl Rtn {
             .iter()
             .zip(avcs)
             .map(|(pl, avc)| match (pl, avc) {
-                (Some(pl), Some(avc)) => Some(pl / avc),
+                (Some(pl), Some(avc)) => match avc.classify() {
+                    std::num::FpCategory::Normal => Some(pl / avc),
+                    _ => None,
+                },
                 _ => None,
             })
             .collect();
@@ -246,5 +253,19 @@ mod tests {
         let dietz = rtn.dietz(51, 100).unwrap();
         let dietz_n: Option<f64> = *dietz.last().unwrap();
         assert_eq!(dietz_n.unwrap(), 0.);
+    }
+    #[test]
+    fn ok_with_zero_begin() {
+        let dates = vec![-1, 0, 1, 50, 100];
+        let mvs = vec![0., 0., 100., 205., 305.];
+        let pls = vec![0., 0., 0., 5., 0.];
+        let rtn = Rtn::new(dates, mvs, pls).unwrap();
+        let avc = rtn.dietz_avc(1, 1).unwrap();
+        let dietz = rtn.dietz(1, 1).unwrap();
+        let twdr = rtn.twrr_dr(0, 1).unwrap();
+        assert_eq!(rtn.cf(2).unwrap(), 100.);
+        assert_eq!(avc, vec![Some(0.)]);
+        assert_eq!(dietz, vec![None]);
+        assert_eq!(twdr, vec![None, Some(0.)]);
     }
 }
