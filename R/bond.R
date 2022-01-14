@@ -6,7 +6,10 @@
 #' @return a double vector with 3 elements: ytm, macd and modd
 #' @export
 bond_result <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date, clean_price) {
-  rust_bond_result(value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date, clean_price)
+  args <- prepare_args(
+    ymd(value_date), ymd(mty_date), redem_value, cpn_rate, cpn_freq, ymd(ref_date), clean_price
+  )
+  do.call(rust_bond_result, args)
 }
 
 
@@ -14,5 +17,8 @@ bond_result <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq, r
 #' @inheritParams bond_result
 #' @export
 bond_cf <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date) {
-  rust_bond_cf(value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date)
+  args <- prepare_args(
+    ymd(value_date), ymd(mty_date), redem_value, cpn_rate, cpn_freq, ymd(ref_date)
+  )
+  do.call(rust_bond_cf, args)
 }
