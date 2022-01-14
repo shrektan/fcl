@@ -29,6 +29,8 @@ create_rtn <- function(ids, dates, mvs, pls) {
   vars <- c("twrr_cr", "twrr_dr", "dietz", "dietz_avc", "cum_pl")
   lapply(vars, function(var) {
     fun <- function(id, from, to) {
+      from <- ymd(from)
+      to <- ymd(to)
       .self <- out$.self
       xts::xts(
         .self[[var]](as.integer(id), from, to),
