@@ -3,7 +3,7 @@
 # fcl
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/shrektan/fcl/workflows/R-CMD-check/badge.svg)](https://github.com/shrektan/fcl/actions) [![CRAN status](https://www.r-pkg.org/badges/version/fcl)](https://CRAN.R-project.org/package=fcl) <!-- badges: end -->
+[![R-CMD-check](https://github.com/shrektan/fcl/workflows/R-CMD-check/badge.svg)](https://github.com/shrektan/fcl/actions) [![CRAN status](https://www.r-pkg.org/badges/version/fcl)](https://CRAN.R-project.org/package=fcl) [![Coverage Status](https://coveralls.io/repos/github/shrektan/fcl/badge.svg?branch=main)](https://coveralls.io/github/shrektan/fcl?branch=main) <!-- badges: end -->
 
 A financial calculator written in Rust. It provides simple calculations for bond YTM, Duration, etc.
 
@@ -76,21 +76,21 @@ rtn$dietz(1, ymd(210102), ymd(210110))
 #> 2021-01-02 0.00000000
 #> 2021-01-03 0.00000000
 #> 2021-01-04 0.00000000
-#> 2021-01-05 0.03000000
-#> 2021-01-06 0.02884615
-#> 2021-01-07 0.02812500
-#> 2021-01-08 0.02763158
-#> 2021-01-09 0.02727273
-#> 2021-01-10 0.09000000
+#> 2021-01-05 0.02857143
+#> 2021-01-06 0.02777778
+#> 2021-01-07 0.02727273
+#> 2021-01-08 0.02692308
+#> 2021-01-09 0.02666667
+#> 2021-01-10 0.08737864
 rtn$dietz_avc(1, ymd(210102), ymd(210110))
 #>                [,1]
 #> 2021-01-02 100.0000
 #> 2021-01-03 100.0000
 #> 2021-01-04 100.0000
-#> 2021-01-05 100.0000
-#> 2021-01-06 104.0000
-#> 2021-01-07 106.6667
-#> 2021-01-08 108.5714
-#> 2021-01-09 110.0000
-#> 2021-01-10 111.1111
+#> 2021-01-05 105.0000
+#> 2021-01-06 108.0000
+#> 2021-01-07 110.0000
+#> 2021-01-08 111.4286
+#> 2021-01-09 112.5000
+#> 2021-01-10 114.4444
 ```

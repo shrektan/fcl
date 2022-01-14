@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/shrektan/fcl/workflows/R-CMD-check/badge.svg)](https://github.com/shrektan/fcl/actions)
 [![CRAN status](https://www.r-pkg.org/badges/version/fcl)](https://CRAN.R-project.org/package=fcl)
+[![Coverage Status](https://coveralls.io/repos/github/shrektan/fcl/badge.svg?branch=main)](https://coveralls.io/github/shrektan/fcl?branch=main)
 <!-- badges: end -->
 
 A financial calculator written in Rust. It provides simple calculations for bond YTM, Duration, etc.
