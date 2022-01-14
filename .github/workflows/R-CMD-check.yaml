@@ -204,7 +204,7 @@ jobs:
           files: "pkgbin/*"
 
   Coverage:
-    needs: Formatting
+    needs: R-CMD-check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
