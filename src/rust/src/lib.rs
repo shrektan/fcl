@@ -52,11 +52,8 @@ fn make_bond(
     out
 }
 
-/// Generate bond's cash flows
-/// @inheritParams bond_result
-/// @export
 #[extendr]
-fn bond_cf(
+fn rust_bond_cf(
     value_date: Robj,
     mty_date: Robj,
     redem_value: Robj,
@@ -99,15 +96,8 @@ fn bond_cf(
     )
 }
 
-/// Calculate the Bond's YTM, Maclay Duration, Modified Duration
-/// @param value_date,mty_date the value and maturity date of the bond
-/// @param redem_value,cpn_rate,cpn_freq the redemption value, coupon rate and coupon frequency of the bond.
-///   Note that the **frequency** can only be one of 1, 2, 4, 0 (pay at mature)
-/// @param ref_date,clean_price the reference date and the clean price that used to calculate the bond results
-/// @return a double vector with 3 elements: ytm, macd and modd
-/// @export
 #[extendr]
-fn bond_result(
+fn rust_bond_result(
     value_date: Robj,
     mty_date: Robj,
     redem_value: Robj,
@@ -257,7 +247,7 @@ impl RRtn {
 // See corresponding C code in `entrypoint.c`.
 extendr_module! {
     mod fcl;
-    fn bond_result;
-    fn bond_cf;
+    fn rust_bond_result;
+    fn rust_bond_cf;
     impl RRtn;
 }
