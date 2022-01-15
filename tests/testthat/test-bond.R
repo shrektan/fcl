@@ -34,3 +34,8 @@ test_that("bond works", {
     as.double(bond_result(ymd("2018-01-01"), ymd("2020-01-01"), 100.0, 0.05, 3L, ymd("2019-01-01"), 100.0)), na_out
   )
 })
+
+test_that("bond_result adjusts input to correct length and type", {
+  out <- bond_result(211110, 20611110, 100, 0.04830, 2, 211130, c(109.83, 100))
+  expect_equal(round(out[, "YTM"], 4), c(0.0436, 0.0489))
+})

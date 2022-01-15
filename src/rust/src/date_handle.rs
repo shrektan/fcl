@@ -20,6 +20,7 @@ pub fn add_months(ref_date: &NaiveDate, months: i32) -> NaiveDate {
     )
 }
 
+// this is similiar to 30 / 360 rule
 pub fn year_frac(d1: &NaiveDate, d0: &NaiveDate) -> f64 {
     (d1.year() - d0.year()) as f64
     // must be as f64 first, otherwise u32 - u32 may overflow (when negative)

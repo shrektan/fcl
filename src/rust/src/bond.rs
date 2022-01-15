@@ -116,8 +116,8 @@ impl FixedBond {
         }
         dates
     }
-    /// Calculate the Next Coupon Date
-    /// @param adjust when true, it unadjust the last coupon date to mty date, if it's beyond
+    // Calculate the Next Coupon Date
+    // @param adjust when true, it unadjust the last coupon date to mty date, if it's beyond
     fn nxt_cpn_date(&self, ref_date: &NaiveDate, adjust: bool) -> Option<NaiveDate> {
         if ref_date >= &self.mty_date {
             return None;
@@ -144,10 +144,10 @@ impl FixedBond {
         };
         self.redem_value * self.cpn_rate * factor
     }
-    /// Calculate the accrued coupon
-    /// `eod` means it returns the value at the end of the day.
-    /// If true, at the coupon / mty date it returns 0 otherwise returns the paying coupon at that day.
-    /// It uses the Actual / Actual rule to calculate the accrued coupon.
+    // Calculate the accrued coupon
+    // `eod` means it returns the value at the end of the day.
+    // If true, at the coupon / mty date it returns 0 otherwise returns the paying coupon at that day.
+    // It uses the Actual / Actual rule to calculate the accrued coupon.
     fn accrued(&self, ref_date: &NaiveDate, eod: bool) -> f64 {
         if ref_date > &self.mty_date || ref_date <= &self.value_date {
             return 0.0;

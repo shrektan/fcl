@@ -7,7 +7,7 @@
 #' @export
 bond_result <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date, clean_price) {
   args <- prepare_args(
-    ymd(value_date), ymd(mty_date), redem_value, cpn_rate, cpn_freq, ymd(ref_date), clean_price
+    ymd(value_date), ymd(mty_date), as.double(redem_value), as.double(cpn_rate), as.integer(cpn_freq), ymd(ref_date), as.double(clean_price)
   )
   do.call(rust_bond_result, args)
 }
@@ -18,7 +18,7 @@ bond_result <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq, r
 #' @export
 bond_cf <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date) {
   args <- prepare_args(
-    ymd(value_date), ymd(mty_date), redem_value, cpn_rate, cpn_freq, ymd(ref_date)
+    ymd(value_date), ymd(mty_date), as.double(redem_value), as.double(cpn_rate), as.integer(cpn_freq), ymd(ref_date)
   )
   do.call(rust_bond_cf, args)
 }
