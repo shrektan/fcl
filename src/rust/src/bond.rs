@@ -240,6 +240,7 @@ impl FixedBond {
         Some(BondVal { ytm, macd, modd })
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -367,27 +368,6 @@ mod tests {
         let ref_date = NaiveDate::from_ymd(2010, 1, 1);
         let res = bond.result(&ref_date, 100.0).unwrap();
         assert_eq!(rnd2(res.macd / (1.0 + res.ytm)), rnd2(res.modd));
-    }
-    #[test]
-    fn add_months() {
-        let ref_date = NaiveDate::from_ymd(2020, 12, 31);
-        assert_eq!(date_handle::add_months(&ref_date, 0), ref_date);
-        assert_eq!(
-            date_handle::add_months(&ref_date, 1),
-            NaiveDate::from_ymd(2021, 1, 31)
-        );
-        assert_eq!(
-            date_handle::add_months(&ref_date, 2),
-            NaiveDate::from_ymd(2021, 2, 28)
-        );
-        assert_eq!(
-            date_handle::add_months(&ref_date, 11),
-            NaiveDate::from_ymd(2021, 11, 30)
-        );
-        assert_eq!(
-            date_handle::add_months(&ref_date, 12),
-            NaiveDate::from_ymd(2021, 12, 31)
-        );
     }
 
     #[test]

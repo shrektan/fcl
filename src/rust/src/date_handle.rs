@@ -26,3 +26,18 @@ pub fn year_frac(d1: &NaiveDate, d0: &NaiveDate) -> f64 {
         + (d1.month() as f64 - d0.month() as f64) / 12.0
         + (d1.day() as f64 - d0.day() as f64) / 365.0
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::NaiveDate;
+    #[test]
+    fn add_months_work() {
+        let ref_date = NaiveDate::from_ymd(2020, 12, 31);
+        assert_eq!(add_months(&ref_date, 0), ref_date);
+        assert_eq!(add_months(&ref_date, 1), NaiveDate::from_ymd(2021, 1, 31));
+        assert_eq!(add_months(&ref_date, 2), NaiveDate::from_ymd(2021, 2, 28));
+        assert_eq!(add_months(&ref_date, 11), NaiveDate::from_ymd(2021, 11, 30));
+        assert_eq!(add_months(&ref_date, 12), NaiveDate::from_ymd(2021, 12, 31));
+    }
+}
