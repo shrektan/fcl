@@ -3,9 +3,9 @@ test_that("bond works", {
   out <- bond_result(ymd("2021-01-01", "2021-02-01"), ymd("2025-01-01", "2025-02-01"), 100.0, 0.05, 0L, ymd("2022-01-01", "2022-02-01"), 100)
   expect_equal(as.double(out[1,]), as.double(out[2,]))
   expect <- data.frame(
-    YTM = c(0.0454848062096707, 0.0299794780750772),
-    MACD = c(3.00036561713138, 7.23139084505863),
-    MODD = c(2.8721026917994, 7.02455669824076)
+    YTM = c(0.0455272763905981, 0.03),
+    MACD = c(3.0, 7.23028295522156),
+    MODD = c(2.86936559941372, 7.01969218987131)
   )
   out <- bond_result(ymd("2021-01-01", "2021-02-01"), ymd("2025-01-01", "2030-02-01"), 100.0, c(0.05, 0.03), c(0L, 1L), ymd("2022-01-01", "2022-02-01"), 100)
   expect_equal(out, expect)
@@ -38,4 +38,19 @@ test_that("bond works", {
 test_that("bond_result adjusts input to correct length and type", {
   out <- bond_result(211110, 20611110, 100, 0.04830, 2, 211130, c(109.83, 100))
   expect_equal(round(out[, "YTM"], 4), c(0.0436, 0.0489))
+})
+
+test_that("bond_result returns the same for leap and non-leap year", {
+  out <- fcl::bond_result(
+    value_date = c(200101, 210101),
+    mty_date = c(210101, 220101),
+    redem_value = 100,
+    cpn_rate = 0.05,
+    cpn_freq = 1,
+    ref_date = c(200101, 210101),
+    clean_price = 100
+  )
+  expect_equal(out$YTM, c(0.05, 0.05))
+  expect_equal(out$MACD, c(1, 1))
+  expect_equal(out$MODD, c(1 / 1.05, 1 / 1.05))
 })
