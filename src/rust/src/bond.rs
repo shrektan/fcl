@@ -155,12 +155,10 @@ impl FixedBond {
         }
         let cpn_dates = self.cpn_dates(false);
         let calculate = |i: usize| {
-            // dbg!(&cpn_dates); dbg!(&ref_date); dbg!(i);
             let last_cpn_date = cpn_dates[i - 1];
             let nxt_cpn_date = cpn_dates[i];
             let cpn_days = nxt_cpn_date.signed_duration_since(last_cpn_date).num_days();
             let days = ref_date.signed_duration_since(last_cpn_date).num_days();
-            // dbg!(cpn_days); dbg!(days);
             self.cpn_value() / cpn_days as f64 * days as f64
         };
 
