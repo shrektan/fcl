@@ -4,6 +4,18 @@ pub trait NearEq {
     fn near_equal(&self, right: &Self) -> bool;
 }
 
+impl NearEq for f64 {
+    fn near_equal(&self, r: &Self) -> bool {
+        let l = &self;
+        // l or r could be NaN or infinite
+        if l.classify() != r.classify() || (*l - *r).abs() > f64::EPSILON.sqrt() {
+            false
+        } else {
+            true
+        }
+    }
+}
+
 impl NearEq for Vec<Option<f64>> {
     fn near_equal(&self, right: &Self) -> bool {
         let left = &self;
@@ -14,8 +26,7 @@ impl NearEq for Vec<Option<f64>> {
         for (i, left_val) in left.iter().enumerate() {
             match (left_val, right[i]) {
                 (Some(l), Some(r)) => {
-                    // l or r could be NaN or infinite
-                    if l.classify() != r.classify() || (l - r).abs() > f64::EPSILON.sqrt() {
+                    if !l.near_equal(&r) {
                         failed = true;
                         break;
                     }
@@ -39,10 +50,7 @@ impl NearEq for Vec<f64> {
         }
         let mut failed = false;
         for (i, left_val) in left.iter().enumerate() {
-            // l or r could be NaN or infinite
-            if left_val.classify() != right[i].classify()
-                || (left_val - right[i]).abs() > f64::EPSILON.sqrt()
-            {
+            if !left_val.near_equal(&right[i]) {
                 failed = true;
                 break;
             }

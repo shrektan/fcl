@@ -1,5 +1,7 @@
 use crate::date_handle;
-use chrono::{DateTime, NaiveDate, Utc};
+use crate::xirr::xirr;
+use crate::xirr::xnpv;
+use chrono::NaiveDate;
 use std::collections::BTreeMap;
 
 #[derive(Debug)]
@@ -60,15 +62,6 @@ impl Cashflow {
             }
         }
         Self { data }
-    }
-    fn xirr_cf(&self) -> (Vec<DateTime<Utc>>, Vec<f64>) {
-        let mut cfs: Vec<f64> = Vec::new();
-        let mut dates: Vec<DateTime<Utc>> = Vec::new();
-        for (k, v) in &self.data {
-            cfs.push(*v);
-            dates.push(DateTime::<Utc>::from_utc(k.and_hms(0, 0, 0), Utc));
-        }
-        (dates, cfs)
     }
 }
 
@@ -206,18 +199,19 @@ impl FixedBond {
     }
     pub fn result(&self, ref_date: &NaiveDate, clean_price: f64) -> Option<BondVal> {
         let dirty_price = self.dirty_price(ref_date, clean_price);
-        let cf = self
+        let cashflow = self
             .cashflow(BondCfType::All)
-            .cf(ref_date, Some(dirty_price))
-            .xirr_cf();
-        if (&cf.0).len() == 0 {
+            .cf(ref_date, Some(dirty_price));
+        if cashflow.len() == 0 {
             return None; // otherwise xirr will throw
         }
-        let ytm = financial::xirr(&cf.1, &cf.0, None).ok()?;
+        let dates = cashflow.dates();
+        let cfs = cashflow.values();
+        let ytm = xirr(&cfs, &dates, None).ok()?;
         let modd = {
             let ytm_chg = 1e-6;
-            let npv1 = financial::xnpv(ytm + ytm_chg, &cf.1, &cf.0).ok()?;
-            let npv0 = financial::xnpv(ytm - ytm_chg, &cf.1, &cf.0).ok()?;
+            let npv1 = xnpv(ytm + ytm_chg, &cfs, &dates).ok()?;
+            let npv0 = xnpv(ytm - ytm_chg, &cfs, &dates).ok()?;
             -(npv1 - npv0) / (2.0 * ytm_chg * dirty_price)
         };
         let macd = {
@@ -231,7 +225,7 @@ impl FixedBond {
                 .collect();
             let macd = &years
                 .iter()
-                .zip(&cf.1)
+                .zip(&cfs)
                 .map(|(t, cf)| cf * t * (1.0 + ytm).powf(-t))
                 .sum()
                 / dirty_price;

@@ -1,9 +1,14 @@
 Package: fcl
 Title: Financial Calculator
 Version: 0.0.11
-Authors@R:
+Authors@R: c(
     person("Xianying", "Tan", , "shrektan@126.com", role = c("aut", "cre"),
-           comment = c("ORCID" = "0000-0002-6072-3521"))
+           comment = c(ORCID = "0000-0002-6072-3521")),
+    person("Raymon", "Mina", , "raymonmina@gmail.com", role = c("ctb"),
+           comment = c("find_root.rs, xirr.rs")),
+    person("Hiroaki", "Yutani", , "yutani.ini@gmail.com", role = c("ctb"),
+           comment = c(ORCID = "0000-0002-3385-7233", "configure, configure.win, tools/configure.R"))
+    )
 Maintainer: Xianying Tan <shrektan@126.com>
 Description: Calculate Bond YTM / Duration, fast time-weighted rate of return, Modified Dietz, etc.
 URL: https://github.com/shrektan/fcl
