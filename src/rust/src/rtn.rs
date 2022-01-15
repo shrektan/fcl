@@ -243,14 +243,14 @@ mod tests {
 
         let avc = rtn.dietz_avc(1, 100).unwrap();
         let avc_n: Option<f64> = *avc.last().unwrap();
-        assert_eq!(avc_n.unwrap(), 100. + 100.*51./100. + 100.*1./100.);
+        assert_eq!(avc_n.unwrap(), 100. + 100. * 51. / 100. + 100. * 1. / 100.);
         let dietz = rtn.dietz(1, 50).unwrap();
         let dietz_n: Option<f64> = *dietz.last().unwrap();
-        assert_eq!(dietz_n.unwrap(), 5. / (100. + 100./50.));
+        assert_eq!(dietz_n.unwrap(), 5. / (100. + 100. / 50.));
 
         let avc = rtn.dietz_avc(51, 100).unwrap();
         let avc_n: Option<f64> = *avc.last().unwrap();
-        assert_eq!(avc_n.unwrap(), 205. + 100.*1./50.);
+        assert_eq!(avc_n.unwrap(), 205. + 100. * 1. / 50.);
         let dietz = rtn.dietz(51, 100).unwrap();
         let dietz_n: Option<f64> = *dietz.last().unwrap();
         assert_eq!(dietz_n.unwrap(), 0.);
