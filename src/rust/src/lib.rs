@@ -3,6 +3,7 @@ use extendr_api::prelude::*;
 mod assert;
 mod bond;
 mod check_len;
+mod date_handle;
 mod rdate;
 mod rtn;
 use rdate::ToRDate;

@@ -1,3 +1,4 @@
+use crate::date_handle;
 use chrono::{DateTime, Datelike, NaiveDate, Utc};
 use std::collections::BTreeMap;
 
@@ -107,25 +108,6 @@ impl FixedBond {
             + (d1.month() as f64 - d0.month() as f64) / 12.0
             + (d1.day() as f64 - d0.day() as f64) / 365.0
     }
-    fn add_months(ref_date: &NaiveDate, months: u32) -> NaiveDate {
-        let num_of_months = ref_date.year() * 12 + ref_date.month() as i32 + months as i32;
-        let year = (num_of_months - 1) / 12;
-        let month = (num_of_months - 1) % 12 + 1;
-        let since = NaiveDate::signed_duration_since;
-        let nxt_month = if month == 12 {
-            NaiveDate::from_ymd(year + 1, 1 as u32, 1)
-        } else {
-            NaiveDate::from_ymd(year, (month + 1) as u32, 1)
-        };
-        let max_day =
-            since(nxt_month, NaiveDate::from_ymd(year, month as u32, 1)).num_days() as u32;
-        let day = ref_date.day();
-        NaiveDate::from_ymd(
-            year,
-            month as u32,
-            if day > max_day { max_day } else { day },
-        )
-    }
     fn cpn_dates(&self, adjust: bool) -> Vec<NaiveDate> {
         let mut dates: Vec<NaiveDate> = vec![self.value_date];
         let mut ref_date = self.value_date;
@@ -147,7 +129,7 @@ impl FixedBond {
             return None;
         }
         let res = match self.cpn_freq {
-            CpnFreq::Regular(i) => Some(Self::add_months(ref_date, 12 / i as u32)),
+            CpnFreq::Regular(i) => Some(date_handle::add_months(ref_date, 12 / i as i32)),
             CpnFreq::Zero => Some(self.mty_date),
         };
         match res {
@@ -395,21 +377,21 @@ mod tests {
     #[test]
     fn add_months() {
         let ref_date = NaiveDate::from_ymd(2020, 12, 31);
-        assert_eq!(FixedBond::add_months(&ref_date, 0), ref_date);
+        assert_eq!(date_handle::add_months(&ref_date, 0), ref_date);
         assert_eq!(
-            FixedBond::add_months(&ref_date, 1),
+            date_handle::add_months(&ref_date, 1),
             NaiveDate::from_ymd(2021, 1, 31)
         );
         assert_eq!(
-            FixedBond::add_months(&ref_date, 2),
+            date_handle::add_months(&ref_date, 2),
             NaiveDate::from_ymd(2021, 2, 28)
         );
         assert_eq!(
-            FixedBond::add_months(&ref_date, 11),
+            date_handle::add_months(&ref_date, 11),
             NaiveDate::from_ymd(2021, 11, 30)
         );
         assert_eq!(
-            FixedBond::add_months(&ref_date, 12),
+            date_handle::add_months(&ref_date, 12),
             NaiveDate::from_ymd(2021, 12, 31)
         );
     }

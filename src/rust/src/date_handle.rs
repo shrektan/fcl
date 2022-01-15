@@ -1,0 +1,21 @@
+// Code is from shrektan/ymd
+use chrono::{Datelike, NaiveDate};
+
+pub fn add_months(ref_date: &NaiveDate, months: i32) -> NaiveDate {
+    let num_of_months = ref_date.year() * 12 + ref_date.month() as i32 + months as i32;
+    let year = (num_of_months - 1) / 12;
+    let month = (num_of_months - 1) % 12 + 1;
+    let since = NaiveDate::signed_duration_since;
+    let nxt_month = if month == 12 {
+        NaiveDate::from_ymd(year + 1, 1 as u32, 1)
+    } else {
+        NaiveDate::from_ymd(year, (month + 1) as u32, 1)
+    };
+    let max_day = since(nxt_month, NaiveDate::from_ymd(year, month as u32, 1)).num_days() as u32;
+    let day = ref_date.day();
+    NaiveDate::from_ymd(
+        year,
+        month as u32,
+        if day > max_day { max_day } else { day },
+    )
+}
