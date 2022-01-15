@@ -1,5 +1,5 @@
 use crate::date_handle;
-use chrono::{DateTime, Datelike, NaiveDate, Utc};
+use chrono::{DateTime, NaiveDate, Utc};
 use std::collections::BTreeMap;
 
 #[derive(Debug)]
@@ -102,12 +102,6 @@ impl FixedBond {
             cpn_freq: to_cpn_freq(cpn_freq)?,
         })
     }
-    fn years(d1: &NaiveDate, d0: &NaiveDate) -> f64 {
-        (d1.year() - d0.year()) as f64
-        // must be as f64 first, otherwise u32 - u32 may overflow (when negative)
-            + (d1.month() as f64 - d0.month() as f64) / 12.0
-            + (d1.day() as f64 - d0.day() as f64) / 365.0
-    }
     fn cpn_dates(&self, adjust: bool) -> Vec<NaiveDate> {
         let mut dates: Vec<NaiveDate> = vec![self.value_date];
         let mut ref_date = self.value_date;
@@ -146,7 +140,7 @@ impl FixedBond {
     fn cpn_value(&self) -> f64 {
         let factor = match self.cpn_freq {
             CpnFreq::Regular(i) => 1.0 / i as f64,
-            CpnFreq::Zero => Self::years(&self.mty_date, &self.value_date),
+            CpnFreq::Zero => date_handle::year_frac(&self.mty_date, &self.value_date),
         };
         self.redem_value * self.cpn_rate * factor
     }
@@ -233,7 +227,7 @@ impl FixedBond {
             let years: Vec<f64> = cf2
                 .data
                 .keys()
-                .map(|date: &NaiveDate| FixedBond::years(date, ref_date))
+                .map(|date: &NaiveDate| date_handle::year_frac(date, ref_date))
                 .collect();
             let macd = &years
                 .iter()

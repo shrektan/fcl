@@ -19,3 +19,10 @@ pub fn add_months(ref_date: &NaiveDate, months: i32) -> NaiveDate {
         if day > max_day { max_day } else { day },
     )
 }
+
+pub fn year_frac(d1: &NaiveDate, d0: &NaiveDate) -> f64 {
+    (d1.year() - d0.year()) as f64
+    // must be as f64 first, otherwise u32 - u32 may overflow (when negative)
+        + (d1.month() as f64 - d0.month() as f64) / 12.0
+        + (d1.day() as f64 - d0.day() as f64) / 365.0
+}
