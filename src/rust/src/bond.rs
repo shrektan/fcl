@@ -145,12 +145,14 @@ impl FixedBond {
         self.redem_value * self.cpn_rate * factor
     }
     /// Calculate the accrued coupon
-    /// @param eop, if true, at the coupon / mty date it returns 0 otherwise returns the paying coupon
-    fn accrued(&self, ref_date: &NaiveDate, eop: bool) -> f64 {
+    /// `eod` means it returns the value at the end of the day.
+    /// If true, at the coupon / mty date it returns 0 otherwise returns the paying coupon at that day.
+    /// It uses the Actual / Actual rule to calculate the accrued coupon.
+    fn accrued(&self, ref_date: &NaiveDate, eod: bool) -> f64 {
         if ref_date > &self.mty_date || ref_date <= &self.value_date {
             return 0.0;
         }
-        if eop && ref_date == &self.mty_date {
+        if eod && ref_date == &self.mty_date {
             return 0.0;
         }
         let cpn_dates = self.cpn_dates(false);
@@ -165,7 +167,7 @@ impl FixedBond {
         match cpn_dates.binary_search(&ref_date) {
             // when ok, it means it's one of the cpn date and the coupon has been paid then should be zero
             Ok(i) => {
-                if eop {
+                if eod {
                     0.0
                 } else {
                     calculate(i)
