@@ -1,3 +1,5 @@
+// The code is the same as https://github.com/shrektan/ymd/blob/main/src/rust/src/rdate.rs
+
 use chrono::{Datelike, NaiveDate};
 use extendr_api::prelude::*;
 
