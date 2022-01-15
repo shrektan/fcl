@@ -1,5 +1,7 @@
 use crate::date_handle;
-use chrono::{DateTime, NaiveDate, Utc};
+use crate::xirr::xirr;
+use crate::xirr::xnpv;
+use chrono::NaiveDate;
 use std::collections::BTreeMap;
 
 #[derive(Debug)]
@@ -61,12 +63,12 @@ impl Cashflow {
         }
         Self { data }
     }
-    fn xirr_cf(&self) -> (Vec<DateTime<Utc>>, Vec<f64>) {
+    fn xirr_cf(&self) -> (Vec<NaiveDate>, Vec<f64>) {
         let mut cfs: Vec<f64> = Vec::new();
-        let mut dates: Vec<DateTime<Utc>> = Vec::new();
+        let mut dates: Vec<NaiveDate> = Vec::new();
         for (k, v) in &self.data {
             cfs.push(*v);
-            dates.push(DateTime::<Utc>::from_utc(k.and_hms(0, 0, 0), Utc));
+            dates.push(*k);
         }
         (dates, cfs)
     }
@@ -213,11 +215,11 @@ impl FixedBond {
         if (&cf.0).len() == 0 {
             return None; // otherwise xirr will throw
         }
-        let ytm = financial::xirr(&cf.1, &cf.0, None).ok()?;
+        let ytm = xirr(&cf.1, &cf.0, None).ok()?;
         let modd = {
             let ytm_chg = 1e-6;
-            let npv1 = financial::xnpv(ytm + ytm_chg, &cf.1, &cf.0).ok()?;
-            let npv0 = financial::xnpv(ytm - ytm_chg, &cf.1, &cf.0).ok()?;
+            let npv1 = xnpv(ytm + ytm_chg, &cf.1, &cf.0).ok()?;
+            let npv0 = xnpv(ytm - ytm_chg, &cf.1, &cf.0).ok()?;
             -(npv1 - npv0) / (2.0 * ytm_chg * dirty_price)
         };
         let macd = {

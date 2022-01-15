@@ -70,8 +70,8 @@ pub fn xirr(values: &[f64], dates: &[NaiveDate], guess: Option<f64>) -> Result<f
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::{Duration, NaiveDate};
     use crate::assert::NearEq;
+    use chrono::{Duration, NaiveDate};
     #[test]
     fn xnpv_with_zero_rate() {
         let cf: [f64; 10000] = [100.; 10000];
