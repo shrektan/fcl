@@ -4,8 +4,10 @@ mod assert;
 mod bond;
 mod check_len;
 mod date_handle;
+mod find_root;
 mod rdate;
 mod rtn;
+mod xirr;
 use rdate::ToRDate;
 use std::collections::BTreeMap;
 
