@@ -7,3 +7,4 @@
 * Implement `rtn()` which allows for fast TWRR or Modified Return.
 * Better handle the case when the deno is zero, for return calculation.
 * Dietz return now uses the same day count handling as TWRR, which is assuming positive cash flow occurs at the BOP of the day while negative cash flow occurs at the EOP.
+* Use `fixed_bond()` to create bond objects with `$cf()` and `$ytm_dur()` methods.
