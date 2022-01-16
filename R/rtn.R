@@ -10,7 +10,7 @@
 #' @param id an integer vector, the ID of each row belongs to
 #' @param date a Date vector, the reference date of each row
 #' @param mv,pl a Double vector, the market value and the PnL of each day
-#' @details All the input vector must be the same length.
+#' @details All the input vector must be 1 or the same length.
 #' @export
 create_rtn <- function(id, date, mv, pl) {
   args <- prepare_args(

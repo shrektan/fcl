@@ -11,12 +11,23 @@ fixed_bond(value_date, mty_date, redem_value, cpn_rate, cpn_freq)
 
 \item{redem_value, cpn_rate, cpn_freq}{the redemption value, coupon rate and coupon frequency of the bond.
 Note that the \strong{frequency} can only be one of 1, 2, 4, 0 (pay at mature)}
-
-\item{ref_date, clean_price}{the reference date and the clean price that used to calculate the bond results}
 }
 \description{
 Create Fixed Bond Object
 }
 \details{
-a double vector with 3 elements: ytm, macd and modd
+it returns an environment containing the following objects:
+\itemize{
+\item \code{.self}: an external pointer of the Rust object.
+\item \code{len()}: a function returns the length of the internal bonds object.
+\item \code{ytm_dur(ref_date, clean_price)}: a function returns a data.frame, with three columns,
+YTM, MODD and MACD.
+\item \code{cf(ref_date)}: a function returns the schedualed bond cashflows, in \code{xts} format.
+}
+}
+\note{
+\itemize{
+\item all arguments must be the same length or 1.
+\item The date input will be converted to Date object via \code{\link[ymd:ymd]{ymd::ymd()}}.
+}
 }

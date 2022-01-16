@@ -5,8 +5,15 @@
 #' @param value_date,mty_date the value and maturity date of the bond
 #' @param redem_value,cpn_rate,cpn_freq the redemption value, coupon rate and coupon frequency of the bond.
 #'   Note that the **frequency** can only be one of 1, 2, 4, 0 (pay at mature)
-#' @param ref_date,clean_price the reference date and the clean price that used to calculate the bond results
-#' @details a double vector with 3 elements: ytm, macd and modd
+#' @note
+#'   * all arguments must be the same length or 1.
+#'   * The date input will be converted to Date object via [ymd::ymd()].
+#' @details it returns an environment containing the following objects:
+#'   * `.self`: an external pointer of the Rust object.
+#'   * `len()`: a function returns the length of the internal bonds object.
+#'   * `ytm_dur(ref_date, clean_price)`: a function returns a data.frame, with three columns,
+#'      YTM, MODD and MACD.
+#'   * `cf(ref_date)`: a function returns the schedualed bond cashflows, in `xts` format.
 #' @export
 fixed_bond <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq) {
   args <- prepare_args(

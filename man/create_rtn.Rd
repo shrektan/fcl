@@ -4,14 +4,14 @@
 \alias{create_rtn}
 \title{Create Rtn Object}
 \usage{
-create_rtn(ids, dates, mvs, pls)
+create_rtn(id, date, mv, pl)
 }
 \arguments{
-\item{ids}{an integer vector, the ID of each row belongs to}
+\item{id}{an integer vector, the ID of each row belongs to}
 
-\item{dates}{a Date vector, the reference date of each row}
+\item{date}{a Date vector, the reference date of each row}
 
-\item{mvs, pls}{a Double vector, the market value and the PnL of each day}
+\item{mv, pl}{a Double vector, the market value and the PnL of each day}
 }
 \description{
 By providing a "group" (\code{ids}) of \code{dates}, \code{mvs} and \code{pls},
@@ -19,5 +19,5 @@ calucating the time-weighted rate of rtn (twrr) or modified
 dietz rate of return (dietz).
 }
 \details{
-All the input vector must be the same length.
+All the input vector must be 1 or the same length.
 }
