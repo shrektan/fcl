@@ -1,6 +1,6 @@
 Package: fcl
 Title: Financial Calculator
-Version: 0.0.12
+Version: 0.0.13
 Authors@R: c(
     person("Xianying", "Tan", , "shrektan@126.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-6072-3521")),
