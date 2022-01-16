@@ -32,27 +32,24 @@ You'll need the rust toolchain to compile this package from source.
 ```{r example}
 library(fcl)
 ## basic example code
-ymd <- ymd::ymd
-bond_result(
-  ymd(c(210101, 210101)),
-  ymd(c(250101, 300201)),
-  c(100.0, 100.0),
-  c(0.05, 0.03),
-  c(0L, 1L),
-  ymd(c(220101, 220201)),
-  c(100, 100)
+bond <- fixed_bond(
+  value_date = 210101,
+  mty_date = c(250101, 300201),
+  redem_value = 100,
+  cpn_rate = c(0.05, 0.03),
+  cpn_freq = c(0, 1)
 )
-bond_cf(
-  ymd(c(210101, 210201)),
-  ymd(c(250101, 300201)),
-  c(100.0, 100.0),
-  c(0.05, 0.03),
-  c(0L, 1L),
-  ymd(c(220101, 220131))
+bond$ytm_dur(
+  ref_date = c(220101, 220201),
+  clean_price = 100
 )
-rtn <- create_rtn(c(1, 1, 1), ymd(c(210101, 210105, 210110)), c(100, 123, 140), c(0, 3, 7))
-rtn$twrr_cr(1, ymd(210102), ymd(210110))
-rtn$twrr_dr(1, ymd(210102), ymd(210110))
-rtn$dietz(1, ymd(210102), ymd(210110))
-rtn$dietz_avc(1, ymd(210102), ymd(210110))
+bond$cf(
+  ref_date = c(220101, 220131)
+)
+
+rtn <- create_rtn(id = 1, date = c(210101, 210105, 210110), mv = c(100, 123, 140), pl = c(0, 3, 7))
+rtn$twrr_cr(1, 210102, 210110)
+rtn$twrr_dr(1, 210102, 210110)
+rtn$dietz(1, 210102, 210110)
+rtn$dietz_avc(1, 210102, 210110)
 ```

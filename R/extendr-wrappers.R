@@ -8,9 +8,18 @@
 #' @useDynLib fcl, .registration = TRUE
 NULL
 
-rust_bond_result <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date, clean_price) .Call(wrap__rust_bond_result, value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date, clean_price)
+RFixedBond <- new.env(parent = emptyenv())
 
-rust_bond_cf <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date) .Call(wrap__rust_bond_cf, value_date, mty_date, redem_value, cpn_rate, cpn_freq, ref_date)
+RFixedBond$new <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq) .Call(wrap__RFixedBond__new, value_date, mty_date, redem_value, cpn_rate, cpn_freq)
+
+RFixedBond$ytm_dur <- function(ref_date, clean_price) .Call(wrap__RFixedBond__ytm_dur, self, ref_date, clean_price)
+
+RFixedBond$len <- function() .Call(wrap__RFixedBond__len, self)
+
+RFixedBond$cf <- function(ref_date) .Call(wrap__RFixedBond__cf, self, ref_date)
+
+#' @export
+`$.RFixedBond` <- function (self, name) { func <- RFixedBond[[name]]; environment(func) <- environment(); func }
 
 RRtn <- new.env(parent = emptyenv())
 

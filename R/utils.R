@@ -1,26 +1,23 @@
 #' @importFrom ymd ymd
 NULL
 
-prepare_args <- function(...) {
+prepare_args <- function(..., .len = NULL) {
   args <- list(...)
-  lens <- vapply(args, length, integer(1))
-  unique_len <- unique(lens)
-
-  if (length(unique_len) == 1L) {
-    return(args)
+  if (is.null(.len)) {
+    lens <- vapply(args, length, integer(1))
+    .len <- max(lens)
   }
-  if (sum(unique_len != 1L) > 1L) {
-    stop("all arguments must be the same length or length one")
-  }
-
-  n <- max(unique_len)
   rep_n <- function(x) {
-    if (length(x) == n) {
+    if (length(x) == 1L) {
+      rep(x, .len)
+    } else if (length(x) == .len) {
       x
-    } else if (length(x) == 1L) {
-      rep(x, n)
     } else {
-      stop("x's length must be 1 or ", n)
+      msg <- "all arguments must be length 1"
+      if (.len != 1) {
+        msg <- sprintf("%s or %d", msg, .len)
+      }
+      stop(msg, call. = FALSE)
     }
   }
   args <- lapply(args, rep_n)
