@@ -1,5 +1,5 @@
 test_that("rtn works", {
-  out <- create_rtn(1, c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7))
+  out <- rtn(1, c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7))
   cr <- out$twrr_cr(1, 210102, 210110)
   dr <- out$twrr_dr(1, 210102, 210110)
   expect_equal(length(cr), 9L)
@@ -17,10 +17,10 @@ test_that("rtn works", {
 
 test_that("rtn will check input len", {
   expect_error(
-    create_rtn(1:2, c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7)),
+    rtn(1:2, c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7)),
     "length 1 or 3", fixed = TRUE
   )
-  out <- create_rtn(1, c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7))
+  out <- rtn(1, c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7))
   expect_error(
     out$twrr_cr(1:2, 210102, 210110),
     "must be length 1", fixed = TRUE

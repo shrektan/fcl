@@ -12,7 +12,7 @@
 #' @param mv,pl a Double vector, the market value and the PnL of each day
 #' @details All the input vector must be 1 or the same length.
 #' @export
-create_rtn <- function(id, date, mv, pl) {
+rtn <- function(id, date, mv, pl) {
   args <- prepare_args(
     as.integer(id), ymd(date), as.double(mv), as.double(pl)
   )
