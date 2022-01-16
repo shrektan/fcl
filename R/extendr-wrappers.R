@@ -23,17 +23,17 @@ RFixedBond$cf <- function(ref_date) .Call(wrap__RFixedBond__cf, self, ref_date)
 
 RRtn <- new.env(parent = emptyenv())
 
-RRtn$new <- function(ids, dates, mvs, pls) .Call(wrap__RRtn__new, ids, dates, mvs, pls)
+RRtn$new <- function(dates, mvs, pls, ids) .Call(wrap__RRtn__new, dates, mvs, pls, ids)
 
-RRtn$twrr_cr <- function(id, from, to) .Call(wrap__RRtn__twrr_cr, self, id, from, to)
+RRtn$twrr_cr <- function(from, to, id) .Call(wrap__RRtn__twrr_cr, self, from, to, id)
 
-RRtn$twrr_dr <- function(id, from, to) .Call(wrap__RRtn__twrr_dr, self, id, from, to)
+RRtn$twrr_dr <- function(from, to, id) .Call(wrap__RRtn__twrr_dr, self, from, to, id)
 
-RRtn$cum_pl <- function(id, from, to) .Call(wrap__RRtn__cum_pl, self, id, from, to)
+RRtn$cum_pl <- function(from, to, id) .Call(wrap__RRtn__cum_pl, self, from, to, id)
 
-RRtn$dietz_avc <- function(id, from, to) .Call(wrap__RRtn__dietz_avc, self, id, from, to)
+RRtn$dietz_avc <- function(from, to, id) .Call(wrap__RRtn__dietz_avc, self, from, to, id)
 
-RRtn$dietz <- function(id, from, to) .Call(wrap__RRtn__dietz, self, id, from, to)
+RRtn$dietz <- function(from, to, id) .Call(wrap__RRtn__dietz, self, from, to, id)
 
 RRtn$dates <- function(from, to) .Call(wrap__RRtn__dates, from, to)
 

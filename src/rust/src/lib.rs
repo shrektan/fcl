@@ -158,8 +158,8 @@ struct RRtn {
 
 #[extendr]
 impl RRtn {
-    fn new(ids: Robj, dates: Robj, mvs: Robj, pls: Robj) -> Self {
-        check_len!(ids, dates, mvs, pls);
+    fn new(dates: Robj, mvs: Robj, pls: Robj, ids: Robj) -> Self {
+        check_len!(dates, mvs, pls, ids);
         let ids: Vec<i32> = ids.as_integer_vector().unwrap();
         let dates: Vec<i32> = dates
             .as_real_vector()
@@ -202,27 +202,27 @@ impl RRtn {
         }
         RRtn { data: data }
     }
-    fn twrr_cr(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
+    fn twrr_cr(&self, from: f64, to: f64, id: i32) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;
         self.data.get(&id).unwrap().twrr_cr(from, to).unwrap()
     }
-    fn twrr_dr(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
+    fn twrr_dr(&self, from: f64, to: f64, id: i32) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;
         self.data.get(&id).unwrap().twrr_dr(from, to).unwrap()
     }
-    fn cum_pl(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
+    fn cum_pl(&self, from: f64, to: f64, id: i32) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;
         self.data.get(&id).unwrap().cum_pl(from, to).unwrap()
     }
-    fn dietz_avc(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
+    fn dietz_avc(&self, from: f64, to: f64, id: i32) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;
         self.data.get(&id).unwrap().dietz_avc(from, to).unwrap()
     }
-    fn dietz(&self, id: i32, from: f64, to: f64) -> Vec<Option<f64>> {
+    fn dietz(&self, from: f64, to: f64, id: i32) -> Vec<Option<f64>> {
         let from = from as i32;
         let to = to as i32;
         self.data.get(&id).unwrap().dietz(from, to).unwrap()

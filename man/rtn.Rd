@@ -4,14 +4,14 @@
 \alias{rtn}
 \title{Create Rtn Object}
 \usage{
-rtn(id, date, mv, pl)
+rtn(date, mv, pl, id = 1L)
 }
 \arguments{
-\item{id}{an integer vector, the ID of each row belongs to}
-
 \item{date}{a Date vector, the reference date of each row}
 
 \item{mv, pl}{a Double vector, the market value and the PnL of each day}
+
+\item{id}{an integer vector, the ID of each row belongs to}
 }
 \description{
 By providing a "group" (\code{ids}) of \code{dates}, \code{mvs} and \code{pls},
