@@ -1,5 +1,5 @@
-test_that("rtn works", {
-  out <- rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7))
+test_that("make_rtn works", {
+  out <- make_rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7))
   cr <- out$twrr_cr(210102, 210110)
   dr <- out$twrr_dr(210102, 210110)
   expect_equal(length(cr), 9L)
@@ -15,21 +15,21 @@ test_that("rtn works", {
   expect_equal(length(avc), 9L)
 })
 
-test_that("rtn will check input len", {
+test_that("make_rtn will check input len", {
   expect_error(
-    rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7), 1:2),
+    make_rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7), 1:2),
     "length 1 or 3", fixed = TRUE
   )
-  out <- rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7), 1)
+  out <- make_rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7), 1)
   expect_error(
     out$twrr_cr(210102, 210110, 1:2),
     "must be length 1", fixed = TRUE
   )
 })
 
-test_that("rtn method's id default works", {
-  obj <- rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7), c(1, 1, 2))
+test_that("make_rtn method's id default works", {
+  obj <- make_rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7), c(1, 1, 2))
   expect_error(obj$twrr_cr(210102, 210105), "id", fixed = TRUE)
-  obj <- rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7), 2)
+  obj <- make_rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7), 2)
   expect_equal(as.double(obj$twrr_cr(210102, 210105)[4, 1]), 0.03)
 })
