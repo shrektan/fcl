@@ -12,7 +12,7 @@
 #' @param id an integer vector, the ID of each row belongs to
 #' @details All the input vector must be 1 or the same length.
 #' @export
-rtn <- function(date, mv, pl, id = 1L) {
+make_rtn <- function(date, mv, pl, id = 1L) {
   args <- prepare_args(
     ymd(date), as.double(mv), as.double(pl), as.integer(id)
   )
