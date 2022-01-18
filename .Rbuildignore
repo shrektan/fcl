@@ -2,3 +2,6 @@
 ^\.github$
 ^README\.Rmd$
 ^src/Makevars$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

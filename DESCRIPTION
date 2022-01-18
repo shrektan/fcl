@@ -11,7 +11,8 @@ Authors@R: c(
     )
 Maintainer: Xianying Tan <shrektan@126.com>
 Description: Calculate Bond YTM / Duration, fast time-weighted rate of return, Modified Dietz, etc.
-URL: https://github.com/shrektan/fcl
+URL: https://github.com/shrektan/fcl,
+    https://shrektan.github.io/fcl/
 BugReports: https://github.com/shrektan/fcl/issues
 SystemRequirements: Cargo (rustc package manager)
 Biarch: true
