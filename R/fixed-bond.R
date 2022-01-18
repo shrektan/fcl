@@ -25,7 +25,21 @@
 #'     where n is the the coupon payment frequency, when the remaining life of the bond is larger
 #'     than 1.
 #'   * When the bond is going to mature within one year, the \eqn{Yield (Excel) = frac{Cashflow}{Price} - 1}.
-#'
+#' @examples
+#' bond <- fixed_bond(
+#'   value_date = 210101,
+#'   mty_date = c(250101, 300201),
+#'   redem_value = 100,
+#'   cpn_rate = c(0.05, 0.03),
+#'   cpn_freq = c(0, 1)
+#' )
+#' bond$ytm_dur(
+#'   ref_date = c(220101, 220201),
+#'   clean_price = 100
+#' )
+#' bond$cf(
+#'   ref_date = c(220101, 220131)
+#' )
 #' @export
 fixed_bond <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq) {
   args <- prepare_args(
