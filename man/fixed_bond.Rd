@@ -30,4 +30,17 @@ YTM, MODD and MACD.
 \item all arguments must be the same length or 1.
 \item The date input will be converted to Date object via \code{\link[ymd:ymd]{ymd::ymd()}}.
 }
+
+\itemize{
+\item It doesn't take the day count convention into account for now.
+\item There's no support for business day calendar. The dates in the cashflow projection are the
+same days in the next few months (see \code{\link[ymd:edate]{ymd::edate()}}). It considers different days in each
+month but no weekend date adjustment.
+\item The YTM value is the cashflow's IRR value. Thus, it doesn't equal to the Excel's Yield
+value, which is adjusted using this formula
+\eqn{YTM (fcl) = (1 + frac{Yield (Excel)}{n})^n - 1},
+where n is the the coupon payment frequency, when the remaining life of the bond is larger
+than 1.
+\item When the bond is going to mature within one year, the \eqn{Yield (Excel) = frac{Cashflow}{Price} - 1}.
+}
 }

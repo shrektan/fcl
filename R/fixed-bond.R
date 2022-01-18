@@ -14,6 +14,18 @@
 #'   * `ytm_dur(ref_date, clean_price)`: a function returns a data.frame, with three columns,
 #'      YTM, MODD and MACD.
 #'   * `cf(ref_date)`: a function returns the schedualed bond cashflows, in `xts` format.
+#' @note
+#'   * It doesn't take the day count convention into account for now.
+#'   * There's no support for business day calendar. The dates in the cashflow projection are the
+#'     same days in the next few months (see [ymd::edate()]). It considers different days in each
+#'     month but no weekend date adjustment.
+#'   * The YTM value is the cashflow's IRR value. Thus, it doesn't equal to the Excel's Yield
+#'     value, which is adjusted using this formula
+#'     \eqn{YTM (fcl) = (1 + frac{Yield (Excel)}{n})^n - 1},
+#'     where n is the the coupon payment frequency, when the remaining life of the bond is larger
+#'     than 1.
+#'   * When the bond is going to mature within one year, the \eqn{Yield (Excel) = frac{Cashflow}{Price} - 1}.
+#'
 #' @export
 fixed_bond <- function(value_date, mty_date, redem_value, cpn_rate, cpn_freq) {
   args <- prepare_args(
