@@ -61,7 +61,7 @@ make_rtn <- function(date, mv, pl, id = 1L) {
       )
       .self <- out$.self
       with(args, xts::xts(
-        .self[[var]](from, to, id),
+        matrix(.self[[var]](from, to, id), ncol = 1L, dimnames = list(NULL, toupper(var))),
         .self$dates(from, to)
       ))
     }
