@@ -4,7 +4,7 @@ test_that("make_rtn works", {
   dr <- out$twrr_dr(210102, 210110)
   expect_equal(length(cr), 9L)
   expect_equal(length(dr), 9L)
-  expect_equal(cr, cumprod(dr + 1) - 1)
+  expect_equal(cr, cumprod(dr + 1) - 1, ignore_attr = TRUE)
   expect_equal(as.double(cr)[length(cr)], 0.1)
 
   dietz <- out$dietz(210102, 210110)
@@ -18,12 +18,14 @@ test_that("make_rtn works", {
 test_that("make_rtn will check input len", {
   expect_error(
     make_rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7), 1:2),
-    "length 1 or 3", fixed = TRUE
+    "length 1 or 3",
+    fixed = TRUE
   )
   out <- make_rtn(c(210101, 210105, 210110), c(100, 103, 110), c(0, 3, 7), 1)
   expect_error(
     out$twrr_cr(210102, 210110, 1:2),
-    "must be length 1", fixed = TRUE
+    "must be length 1",
+    fixed = TRUE
   )
 })
 
