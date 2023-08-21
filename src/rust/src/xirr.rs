@@ -72,10 +72,13 @@ mod tests {
     use super::*;
     use crate::assert::NearEq;
     use chrono::{Duration, NaiveDate};
+    fn from_ymd(year: i32, month: u32, day: u32) -> NaiveDate {
+        return NaiveDate::from_ymd_opt(year, month, day).expect("invalid or out-of-range date");
+    }
     #[test]
     fn xnpv_with_zero_rate() {
         let cf: [f64; 10000] = [100.; 10000];
-        let somedate: NaiveDate = NaiveDate::from_ymd(2021, 1, 1);
+        let somedate: NaiveDate = from_ymd(2021, 1, 1);
         let dates0: [NaiveDate; 10000] = [somedate; 10000];
         let mut dates: [NaiveDate; 10000] = [somedate; 10000];
 
@@ -94,17 +97,11 @@ mod tests {
     fn xirr_test() {
         // non leap year
         let cf = [-100., 105.];
-        let dates = [
-            NaiveDate::from_ymd(2021, 1, 1),
-            NaiveDate::from_ymd(2022, 1, 1),
-        ];
+        let dates = [from_ymd(2021, 1, 1), from_ymd(2022, 1, 1)];
         assert_near_eq!(xirr(&cf, &dates, None).unwrap(), 0.05);
         // leap year
         let cf = [-100., 105.];
-        let dates = [
-            NaiveDate::from_ymd(2020, 1, 1),
-            NaiveDate::from_ymd(2021, 1, 1),
-        ];
+        let dates = [from_ymd(2020, 1, 1), from_ymd(2021, 1, 1)];
         assert_near_eq!(xirr(&cf, &dates, None).unwrap(), 0.05);
     }
 }

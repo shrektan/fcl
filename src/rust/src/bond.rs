@@ -251,36 +251,37 @@ mod tests {
     fn rnd2(x: f64) -> f64 {
         round(x, Some(2))
     }
+    fn from_ymd(year: i32, month: u32, day: u32) -> NaiveDate {
+        return NaiveDate::from_ymd_opt(year, month, day).expect("invalid or out-of-range date");
+    }
     #[test]
     fn dirty_price() {
-        let mut bond = FixedBond::new(
-            NaiveDate::from_ymd(2010, 1, 1),
-            NaiveDate::from_ymd(2015, 1, 1),
-            100.0,
-            0.05,
-            2,
-        )
-        .unwrap();
-        let ref_date = NaiveDate::from_ymd(2010, 1, 1);
+        fn from_ymd(year: i32, month: u32, day: u32) -> NaiveDate {
+            return NaiveDate::from_ymd_opt(year, month, day)
+                .expect("invalid or out-of-range date");
+        }
+        let mut bond =
+            FixedBond::new(from_ymd(2010, 1, 1), from_ymd(2015, 1, 1), 100.0, 0.05, 2).unwrap();
+        let ref_date = from_ymd(2010, 1, 1);
         assert_eq!(bond.accrued(&ref_date, true), 0.0);
-        let ref_date = NaiveDate::from_ymd(2011, 7, 1);
+        let ref_date = from_ymd(2011, 7, 1);
         assert_eq!(bond.dirty_price(&ref_date, 100.0), 100.0);
-        let ref_date = NaiveDate::from_ymd(2011, 1, 1);
+        let ref_date = from_ymd(2011, 1, 1);
         assert_eq!(bond.dirty_price(&ref_date, 100.0), 100.0);
         assert_eq!(bond.accrued(&ref_date, false), 2.5);
 
         bond.cpn_freq = to_cpn_freq(1).unwrap();
-        let ref_date = NaiveDate::from_ymd(2010, 2, 1);
+        let ref_date = from_ymd(2010, 2, 1);
         assert_eq!(bond.accrued(&ref_date, true), 31.0 / 365.0 * 5.0);
 
         let bond = FixedBond {
-            value_date: NaiveDate::from_ymd(2010, 1, 1),
-            mty_date: NaiveDate::from_ymd(2012, 1, 1),
+            value_date: from_ymd(2010, 1, 1),
+            mty_date: from_ymd(2012, 1, 1),
             redem_value: 100.0,
             cpn_rate: 0.05,
             cpn_freq: to_cpn_freq(0).unwrap(),
         };
-        let ref_date = NaiveDate::from_ymd(2010, 2, 1);
+        let ref_date = from_ymd(2010, 2, 1);
         assert_eq!(
             bond.accrued(&ref_date, true),
             31.0 / (365.0 + 365.0) * (5.0 * 2.0)
@@ -289,77 +290,74 @@ mod tests {
     #[test]
     fn plain_bond() {
         let bond = FixedBond {
-            value_date: NaiveDate::from_ymd(2010, 1, 1),
-            mty_date: NaiveDate::from_ymd(2020, 1, 1),
+            value_date: from_ymd(2010, 1, 1),
+            mty_date: from_ymd(2020, 1, 1),
             redem_value: 100.0,
             cpn_rate: 0.05,
             cpn_freq: to_cpn_freq(1).unwrap(),
         };
         let ytm = 0.05;
-        let ref_date = NaiveDate::from_ymd(2010, 1, 1);
+        let ref_date = from_ymd(2010, 1, 1);
         assert_eq!(rnd(bond.result(&ref_date, 100.0).unwrap().ytm), ytm);
         // won't change as the price is clean
-        let ref_date = NaiveDate::from_ymd(2011, 1, 1);
+        let ref_date = from_ymd(2011, 1, 1);
         assert_eq!(rnd(bond.result(&ref_date, 100.0).unwrap().ytm), ytm);
         // won't change as the price is clean
-        let ref_date = NaiveDate::from_ymd(2011, 6, 15);
+        let ref_date = from_ymd(2011, 6, 15);
         assert_eq!(rnd(bond.result(&ref_date, 100.0).unwrap().ytm), ytm);
     }
     #[test]
     fn zero_cpn_bond() {
         let bond = FixedBond {
-            value_date: NaiveDate::from_ymd(2010, 1, 1),
-            mty_date: NaiveDate::from_ymd(2011, 1, 1),
+            value_date: from_ymd(2010, 1, 1),
+            mty_date: from_ymd(2011, 1, 1),
             redem_value: 100.0,
             cpn_rate: 0.05,
             cpn_freq: to_cpn_freq(0).unwrap(),
         };
         let ytm = 0.050000000000000114;
-        let ref_date = NaiveDate::from_ymd(2010, 1, 1);
+        let ref_date = from_ymd(2010, 1, 1);
         assert_eq!(bond.result(&ref_date, 100.0).unwrap().ytm, ytm);
     }
     #[test]
     fn cashflow() {
         let bond = FixedBond {
-            value_date: NaiveDate::from_ymd(2010, 1, 1),
-            mty_date: NaiveDate::from_ymd(2010, 8, 1),
+            value_date: from_ymd(2010, 1, 1),
+            mty_date: from_ymd(2010, 8, 1),
             redem_value: 100.0,
             cpn_rate: 0.05,
             cpn_freq: to_cpn_freq(2).unwrap(),
         };
         let out = bond.cashflow(BondCfType::All).data;
         let mut expect: BTreeMap<NaiveDate, f64> = BTreeMap::new();
-        expect.insert(NaiveDate::from_ymd(2010, 7, 1), 2.5);
-        expect.insert(
-            NaiveDate::from_ymd(2010, 8, 1),
-            100.0 + 5.0 * 0.5 * 31.0 / 184.0,
-        );
+        expect.insert(from_ymd(2010, 7, 1), 2.5);
+        expect.insert(from_ymd(2010, 8, 1), 100.0 + 5.0 * 0.5 * 31.0 / 184.0);
         assert_eq!(out, expect);
     }
     #[test]
     fn dur() {
         let bond = FixedBond {
-            value_date: NaiveDate::from_ymd(2010, 1, 1),
-            mty_date: NaiveDate::from_ymd(2015, 1, 1),
+            value_date: from_ymd(2010, 1, 1),
+            mty_date: from_ymd(2015, 1, 1),
             redem_value: 100.0,
             cpn_rate: 0.05,
             cpn_freq: to_cpn_freq(0).unwrap(),
         };
-        let ref_date = NaiveDate::from_ymd(2010, 1, 1);
+        let ref_date = from_ymd(2010, 1, 1);
         assert_eq!(rnd2(bond.result(&ref_date, 100.0).unwrap().macd), 5.0);
-        let ref_date = NaiveDate::from_ymd(2011, 1, 1);
+        let ref_date = from_ymd(2011, 1, 1);
         assert_eq!(rnd2(bond.result(&ref_date, 100.0).unwrap().macd), 4.0);
-        let ref_date = NaiveDate::from_ymd(2010, 7, 1);
+        let ref_date = from_ymd(2010, 7, 1);
         assert_eq!(rnd2(bond.result(&ref_date, 100.0).unwrap().macd), 4.5);
 
         let bond = FixedBond {
-            value_date: NaiveDate::from_ymd(2010, 1, 1),
-            mty_date: NaiveDate::from_ymd(2015, 1, 1),
+            value_date: from_ymd(2010, 1, 1),
+            mty_date: from_ymd(2015, 1, 1),
             redem_value: 100.0,
             cpn_rate: 0.05,
             cpn_freq: to_cpn_freq(1).unwrap(),
         };
-        let ref_date = NaiveDate::from_ymd(2010, 1, 1);
+        let ref_date = from_ymd(2010, 1, 1);
         let res = bond.result(&ref_date, 100.0).unwrap();
         assert_eq!(rnd2(res.macd / (1.0 + res.ytm)), rnd2(res.modd));
     }
@@ -367,35 +365,29 @@ mod tests {
     #[test]
     fn none_if_xirr_fail() {
         let bond = FixedBond {
-            value_date: NaiveDate::from_ymd(2012, 1, 1),
-            mty_date: NaiveDate::from_ymd(2015, 1, 1),
+            value_date: from_ymd(2012, 1, 1),
+            mty_date: from_ymd(2015, 1, 1),
             redem_value: 100.0,
             cpn_rate: 0.05,
             cpn_freq: to_cpn_freq(1).unwrap(),
         };
-        let ref_date = NaiveDate::from_ymd(2016, 1, 1);
+        let ref_date = from_ymd(2016, 1, 1);
         let res = bond.result(&ref_date, 100.0);
         assert!(res.is_none());
         let bond = FixedBond {
-            value_date: NaiveDate::from_ymd(2018, 1, 1),
-            mty_date: NaiveDate::from_ymd(2015, 1, 1),
+            value_date: from_ymd(2018, 1, 1),
+            mty_date: from_ymd(2015, 1, 1),
             redem_value: 100.0,
             cpn_rate: 0.05,
             cpn_freq: to_cpn_freq(1).unwrap(),
         };
-        let ref_date = NaiveDate::from_ymd(2016, 1, 1);
+        let ref_date = from_ymd(2016, 1, 1);
         let res = bond.result(&ref_date, 100.0);
         assert!(res.is_none());
     }
     #[test]
     fn err_when_invalid_freq() {
-        let bond = FixedBond::new(
-            NaiveDate::from_ymd(2010, 1, 1),
-            NaiveDate::from_ymd(2011, 1, 1),
-            100.0,
-            0.05,
-            3,
-        );
+        let bond = FixedBond::new(from_ymd(2010, 1, 1), from_ymd(2011, 1, 1), 100.0, 0.05, 3);
         assert!(bond.is_err());
     }
 }
