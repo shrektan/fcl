@@ -90,7 +90,7 @@ mod tests {
             i = i + 1;
         }
 
-        assert_eq!(xnpv(0., &cf, &dates).unwrap(), cf.iter().sum());
+        assert_eq!(xnpv(0., &cf, &dates).unwrap(), cf.iter().sum::<f64>());
     }
 
     #[test]
