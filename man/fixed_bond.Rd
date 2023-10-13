@@ -18,7 +18,7 @@ it returns an environment containing the following objects:
 \item \code{.self}: an external pointer of the Rust object.
 \item \code{len()}: a function returns the length of the internal bonds object.
 \item \code{ytm_dur(ref_date, clean_price)}: a function returns a data.frame, with three columns,
-'YTM' (Yield to Maturity), 'MODD' (Modified Duration) and 'MACD' (Macal).
+'YTM' (Yield to Maturity), 'MODD' (Modified Duration) and 'MACD' (Macaulay Duration).
 \item \code{cf(ref_date)}: a function returns the schedualed bond cashflows, in \code{xts} format.
 }
 }

@@ -12,7 +12,7 @@
 #'   * `.self`: an external pointer of the Rust object.
 #'   * `len()`: a function returns the length of the internal bonds object.
 #'   * `ytm_dur(ref_date, clean_price)`: a function returns a data.frame, with three columns,
-#'      'YTM' (Yield to Maturity), 'MODD' (Modified Duration) and 'MACD' (Macal).
+#'      'YTM' (Yield to Maturity), 'MODD' (Modified Duration) and 'MACD' (Macaulay Duration).
 #'   * `cf(ref_date)`: a function returns the schedualed bond cashflows, in `xts` format.
 #' @note
 #'   * It doesn't take the day count convention into account for now.
