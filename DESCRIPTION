@@ -5,7 +5,10 @@ Authors@R: c(
     person("Xianying", "Tan", , "shrektan@126.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-6072-3521")),
     person("Raymon", "Mina", , "raymonmina@gmail.com", role = c("ctb"),
-           comment = c("find_root.rs, xirr.rs"))
+           comment = c("find_root.rs, xirr.rs")),
+    person(given = "The authors of the dependency Rust crates",
+           role = c("ctb"),
+           comment = "see inst/AUTHORS file for details")
     )
 Maintainer: Xianying Tan <shrektan@126.com>
 Description: A financial calculator that provides very fast implementations
