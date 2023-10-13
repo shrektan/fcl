@@ -2,14 +2,14 @@
 % Please edit documentation in R/rtn.R
 \name{make_rtn}
 \alias{make_rtn}
-\title{Create Rtn Object}
+\title{Create a Return Object}
 \usage{
 make_rtn(date, mv, pl, id = 1L)
 }
 \arguments{
 \item{date}{a Date vector, the reference date of each row}
 
-\item{mv, pl}{a double vector, the market value and the PnL of each day}
+\item{mv, pl}{a double vector, the market value and the 'PnL' (Profit and Loss) of each day}
 
 \item{id}{an integer vector, the ID of each row belongs to}
 }
@@ -18,17 +18,17 @@ A list of functions, with signature of \code{from}, \code{to} and \code{id}, all
 which are only allowed to accept a scalar. They all return an \code{xts} object
 with one column.
 \itemize{
-\item \code{twrr_cr}: the cumulative time weighted return
-\item \code{twrr_dr}: the daily time weighted return
+\item \code{twrr_cr}: the cumulative Time-weighted Return
+\item \code{twrr_dr}: the daily Time-weighted Return
 \item \code{dietz}: the Modified Dietz Return
-\item \code{dietz_avc}: the denominator used to calculate the Modified Dietz Return
+\item \code{dietz_avc}: the denominator used to calculate the 'Modifie Dietz Return
 \item \code{cum_pl}: the cumulative PnL
 }
 }
 \description{
 By providing a "group" (\code{ids}) of \code{dates}, \code{mvs} and \code{pls},
-calucating the time-weighted rate of rtn (twrr) or modified
-dietz rate of return (dietz).
+calucating the Time-weighted Rate of Return (TWRR) or Modified
+Dietz Rate of Return (DIETZ).
 }
 \note{
 All the input vector must be 1 or the same length.

@@ -1,14 +1,14 @@
 #' @export
 `[[.RRtn` <- `$.RRtn`
 
-#' Create Rtn Object
+#' Create a Return Object
 #'
 #' By providing a "group" (`ids`) of `dates`, `mvs` and `pls`,
-#' calucating the time-weighted rate of rtn (twrr) or modified
-#' dietz rate of return (dietz).
+#' calucating the Time-weighted Rate of Return (TWRR) or Modified
+#' Dietz Rate of Return (DIETZ).
 #'
 #' @param date a Date vector, the reference date of each row
-#' @param mv,pl a double vector, the market value and the PnL of each day
+#' @param mv,pl a double vector, the market value and the 'PnL' (Profit and Loss) of each day
 #' @param id an integer vector, the ID of each row belongs to
 #' @section Cash flow handling:
 #'   * The cash flow is not provided externally. Instead, it's deducted via
@@ -28,10 +28,10 @@
 #' @return A list of functions, with signature of `from`, `to` and `id`, all of
 #'   which are only allowed to accept a scalar. They all return an `xts` object
 #'   with one column.
-#'   * `twrr_cr`: the cumulative time weighted return
-#'   * `twrr_dr`: the daily time weighted return
+#'   * `twrr_cr`: the cumulative Time-weighted Return
+#'   * `twrr_dr`: the daily Time-weighted Return
 #'   * `dietz`: the Modified Dietz Return
-#'   * `dietz_avc`: the denominator used to calculate the Modified Dietz Return
+#'   * `dietz_avc`: the denominator used to calculate the 'Modifie Dietz Return
 #'   * `cum_pl`: the cumulative PnL
 #' @examples
 #' rtn <- make_rtn(date = c(210101, 210105, 210110), mv = c(100, 123, 140), pl = c(0, 3, 7))
