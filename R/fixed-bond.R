@@ -8,19 +8,19 @@
 #' @note
 #'   * all arguments must be the same length or 1.
 #'   * The date input will be converted to Date object via [ymd::ymd()].
-#' @details it returns an environment containing the following objects:
+#' @return it returns an environment containing the following objects:
 #'   * `.self`: an external pointer of the Rust object.
 #'   * `len()`: a function returns the length of the internal bonds object.
 #'   * `ytm_dur(ref_date, clean_price)`: a function returns a data.frame, with three columns,
-#'      YTM, MODD and MACD.
+#'      'YTM' (Yield to Maturity), 'MODD' (Modified Duration) and 'MACD' (Macal).
 #'   * `cf(ref_date)`: a function returns the schedualed bond cashflows, in `xts` format.
 #' @note
 #'   * It doesn't take the day count convention into account for now.
 #'   * There's no support for business day calendar. The dates in the cashflow projection are the
 #'     same days in the next few months (see [ymd::edate()]). It considers different days in each
 #'     month but no weekend date adjustment.
-#'   * The YTM value is the cashflow's IRR value. Thus, it doesn't equal to the Excel's Yield
-#'     value, which is adjusted using this formula
+#'   * The 'YTM' value is the cashflow's 'IRR' (internal rate of return) value. Thus, it doesn't
+#'     equal to the Excel's Yield value, which is adjusted using this formula
 #'     \eqn{YTM (fcl) = (1 + frac{Yield (Excel)}{n})^n - 1},
 #'     where n is the the coupon payment frequency, when the remaining life of the bond is larger
 #'     than 1.

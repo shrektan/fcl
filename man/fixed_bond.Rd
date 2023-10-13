@@ -12,18 +12,18 @@ fixed_bond(value_date, mty_date, redem_value, cpn_rate, cpn_freq)
 \item{redem_value, cpn_rate, cpn_freq}{the redemption value, coupon rate and coupon frequency of the bond.
 Note that the \strong{frequency} can only be one of 1, 2, 4, 0 (pay at mature)}
 }
-\description{
-Create Fixed Bond Object
-}
-\details{
+\value{
 it returns an environment containing the following objects:
 \itemize{
 \item \code{.self}: an external pointer of the Rust object.
 \item \code{len()}: a function returns the length of the internal bonds object.
 \item \code{ytm_dur(ref_date, clean_price)}: a function returns a data.frame, with three columns,
-YTM, MODD and MACD.
+'YTM' (Yield to Maturity), 'MODD' (Modified Duration) and 'MACD' (Macal).
 \item \code{cf(ref_date)}: a function returns the schedualed bond cashflows, in \code{xts} format.
 }
+}
+\description{
+Create Fixed Bond Object
 }
 \note{
 \itemize{
@@ -36,8 +36,8 @@ YTM, MODD and MACD.
 \item There's no support for business day calendar. The dates in the cashflow projection are the
 same days in the next few months (see \code{\link[ymd:edate]{ymd::edate()}}). It considers different days in each
 month but no weekend date adjustment.
-\item The YTM value is the cashflow's IRR value. Thus, it doesn't equal to the Excel's Yield
-value, which is adjusted using this formula
+\item The 'YTM' value is the cashflow's 'IRR' (internal rate of return) value. Thus, it doesn't
+equal to the Excel's Yield value, which is adjusted using this formula
 \eqn{YTM (fcl) = (1 + frac{Yield (Excel)}{n})^n - 1},
 where n is the the coupon payment frequency, when the remaining life of the bond is larger
 than 1.
