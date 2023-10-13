@@ -12,7 +12,7 @@ Authors@R: c(
     )
 Maintainer: Xianying Tan <shrektan@126.com>
 Description: A financial calculator that provides very fast implementations
-    of common financial indicators using Rust code. It includes functions for
+    of common financial indicators using 'Rust' code. It includes functions for
     bond-related indicators, such as yield to maturity ('YTM'), modified duration,
     and Macaulay duration, as well as functions for calculating time-weighted
     and money-weighted rates of return (using 'Modified Dietz' method) for multiple portfolios,
