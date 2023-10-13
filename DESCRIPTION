@@ -16,7 +16,7 @@ Description: A financial calculator that provides very fast implementations
     bond-related indicators, such as yield to maturity ('YTM'), modified duration,
     and Macaulay duration, as well as functions for calculating time-weighted
     and money-weighted rates of return (using 'Modified Dietz' method) for multiple portfolios,
-    given their market values and profit and loss ('PnL') data. fcl is designed
+    given their market values and profit and loss ('PnL') data. 'fcl' is designed
     to be efficient and accurate for financial analysis and computation. The methods
     used in this package are based on the following references:
     <https://en.wikipedia.org/wiki/Modified_Dietz_method>,
