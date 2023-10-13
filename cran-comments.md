@@ -11,3 +11,7 @@ New submission
 ```
 
 This is a new submission.
+
+# Other Notes
+
+- The size of the package can't be reduced further as it has to bundle all the Rust cates dependencies to avoid the downloading during installation issue.
