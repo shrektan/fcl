@@ -66,11 +66,13 @@ Note that the <strong>frequency</strong> can only be one of 1, 2, 4, 0 (pay at m
 
 </dl></div>
     <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>it returns an environment containing the following objects:</p><ul><li><p><code>.self</code>: an external pointer of the Rust object.</p></li>
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
+
+<p>it returns an environment containing the following objects:</p><ul><li><p><code>.self</code>: an external pointer of the Rust object.</p></li>
 <li><p><code>len()</code>: a function returns the length of the internal bonds object.</p></li>
 <li><p><code>ytm_dur(ref_date, clean_price)</code>: a function returns a data.frame, with three columns,
-YTM, MODD and MACD.</p></li>
+'YTM' (Yield to Maturity), 'MODD' (Modified Duration) and 'MACD' (Macaulay Duration).</p></li>
 <li><p><code>cf(ref_date)</code>: a function returns the schedualed bond cashflows, in <code>xts</code> format.</p></li>
 </ul></div>
     <div class="section level2">
@@ -82,8 +84,8 @@ YTM, MODD and MACD.</p></li>
 <li><p>There's no support for business day calendar. The dates in the cashflow projection are the
 same days in the next few months (see <code><a href="https://shrektan.github.io/ymd/reference/edate.html" class="external-link">ymd::edate()</a></code>). It considers different days in each
 month but no weekend date adjustment.</p></li>
-<li><p>The YTM value is the cashflow's IRR value. Thus, it doesn't equal to the Excel's Yield
-value, which is adjusted using this formula
+<li><p>The 'YTM' value is the cashflow's 'IRR' (internal rate of return) value. Thus, it doesn't
+equal to the Excel's Yield value, which is adjusted using this formula
 \(YTM (fcl) = (1 + frac{Yield (Excel)}{n})^n - 1\),
 where n is the the coupon payment frequency, when the remaining life of the bond is larger
 than 1.</p></li>
