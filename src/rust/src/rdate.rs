@@ -73,20 +73,20 @@ impl ToRDate for [NaiveDate] {
 
 impl ToRDate for Vec<Option<f64>> {
     fn to_rdate(&self) -> Robj {
-        r!(self.clone()).set_class(&["Date"]).unwrap()
+        r!(self.clone()).set_class(&["Date"]).unwrap().clone()
     }
 }
 
 impl ToRDate for [f64] {
     fn to_rdate(&self) -> Robj {
-        r!(self).set_class(&["Date"]).unwrap()
+        r!(self).set_class(&["Date"]).unwrap().clone()
     }
 }
 
 impl ToRDate for [i32] {
     fn to_rdate(&self) -> Robj {
         let out: Vec<f64> = self.iter().map(|v| *v as f64).collect();
-        r!(out).set_class(&["Date"]).unwrap()
+        r!(out).set_class(&["Date"]).unwrap().clone()
     }
 }
 

@@ -7,8 +7,8 @@ edition = '2021'
 crate-type = ['staticlib']
 
 [dependencies]
-extendr-api = { package = "extendr-api", git = "https://github.com/extendr/extendr", rev = "refs/pull/627/head" }
+extendr-api = { package = "extendr-api", version = "0.7.0" }
 chrono = "0.4.26"
 
 [dev-dependencies]
-extendr-engine = { package = "extendr-engine", git = "https://github.com/extendr/extendr", rev = "refs/pull/627/head" }
+extendr-engine = { package = "extendr-engine", version = "0.7.0" }
