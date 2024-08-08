@@ -18,7 +18,7 @@ cc (version 1.0.83):
 cfg-if (version 1.0.0):
   Alex Crichton
 
-chrono (version 0.4.31):
+chrono (version 0.4.38):
   Brandon W. Maister
   Dirkjan Ochtman
   Kang Seonghoon
@@ -31,7 +31,7 @@ core-foundation-sys (version 0.8.4):
 ctor (version 0.2.5):
   Matt Mastracci
 
-extendr-api (version 0.4.0):
+extendr-api (version 0.7.0):
   andy-thomason
   Thomas Down
   Mossa Merhi Reimert
@@ -40,21 +40,23 @@ extendr-api (version 0.4.0):
   Ilia A. Kosenkov
   Michael Milton
 
-extendr-engine (version 0.4.0):
+extendr-engine (version 0.7.0):
   andy-thomason
   Thomas Down
   Mossa Merhi Reimert
   Claus O. Wilke
   Hiroaki Yutani
   Ilia A. Kosenkov
+  Michael Milton
 
-extendr-macros (version 0.4.0):
+extendr-macros (version 0.7.0):
   andy-thomason
   Thomas Down
   Mossa Merhi Reimert
   Claus O. Wilke
   Hiroaki Yutani
   Ilia A. Kosenkov
+  Michael Milton
 
 iana-time-zone (version 0.1.57):
   Andrew Straw
@@ -70,7 +72,7 @@ js-sys (version 0.3.64):
 libc (version 0.2.149):
   The Rust Project Developers
 
-libR-sys (version 0.6.0):
+libR-sys (version 0.7.0):
   andy-thomason
   Thomas Down
   Mossa Merhi Reimert
@@ -100,9 +102,6 @@ quote (version 1.0.33):
 syn (version 2.0.38):
   David Tolnay
 
-syn (version 1.0.109):
-  David Tolnay
-
 unicode-ident (version 1.0.12):
   David Tolnay
 
@@ -124,25 +123,52 @@ wasm-bindgen-shared (version 0.2.87):
 windows (version 0.48.0):
   Microsoft
 
+windows_aarch64_gnullvm (version 0.52.6):
+  Microsoft
+
 windows_aarch64_gnullvm (version 0.48.5):
+  Microsoft
+
+windows_aarch64_msvc (version 0.52.6):
   Microsoft
 
 windows_aarch64_msvc (version 0.48.5):
   Microsoft
 
+windows_i686_gnu (version 0.52.6):
+  Microsoft
+
 windows_i686_gnu (version 0.48.5):
+  Microsoft
+
+windows_i686_gnullvm (version 0.52.6):
+  Microsoft
+
+windows_i686_msvc (version 0.52.6):
   Microsoft
 
 windows_i686_msvc (version 0.48.5):
   Microsoft
 
+windows_x86_64_gnu (version 0.52.6):
+  Microsoft
+
 windows_x86_64_gnu (version 0.48.5):
+  Microsoft
+
+windows_x86_64_gnullvm (version 0.52.6):
   Microsoft
 
 windows_x86_64_gnullvm (version 0.48.5):
   Microsoft
 
+windows_x86_64_msvc (version 0.52.6):
+  Microsoft
+
 windows_x86_64_msvc (version 0.48.5):
+  Microsoft
+
+windows-targets (version 0.52.6):
   Microsoft
 
 windows-targets (version 0.48.5):

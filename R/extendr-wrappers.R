@@ -6,7 +6,6 @@
 # This file was created with the following call:
 #   .Call("wrap__make_fcl_wrappers", use_symbols = TRUE, package_name = "fcl")
 
-#' @docType package
 #' @usage NULL
 #' @useDynLib fcl, .registration = TRUE
 NULL

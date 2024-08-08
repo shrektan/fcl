@@ -87,14 +87,14 @@ License: MIT
 
 Name:    extendr-engine
 Files:   vendor/extendr-engine/*
-Authors: andy-thomason, Thomas Down, Mossa Merhi Reimert, Claus O. Wilke, Hiroaki Yutani, Ilia A. Kosenkov
+Authors: andy-thomason, Thomas Down, Mossa Merhi Reimert, Claus O. Wilke, Hiroaki Yutani, Ilia A. Kosenkov, Michael Milton
 License: MIT
 
 ------------------------------
 
 Name:    extendr-macros
 Files:   vendor/extendr-macros/*
-Authors: andy-thomason, Thomas Down, Mossa Merhi Reimert, Claus O. Wilke, Hiroaki Yutani, Ilia A. Kosenkov
+Authors: andy-thomason, Thomas Down, Mossa Merhi Reimert, Claus O. Wilke, Hiroaki Yutani, Ilia A. Kosenkov, Michael Milton
 License: MIT
 
 ------------------------------
@@ -183,13 +183,6 @@ License: MIT OR Apache-2.0
 
 ------------------------------
 
-Name:    syn
-Files:   vendor/syn/*
-Authors: David Tolnay
-License: MIT OR Apache-2.0
-
-------------------------------
-
 Name:    unicode-ident
 Files:   vendor/unicode-ident/*
 Authors: David Tolnay
@@ -246,6 +239,20 @@ License: MIT OR Apache-2.0
 
 ------------------------------
 
+Name:    windows_aarch64_gnullvm
+Files:   vendor/windows_aarch64_gnullvm/*
+Authors: Microsoft
+License: MIT OR Apache-2.0
+
+------------------------------
+
+Name:    windows_aarch64_msvc
+Files:   vendor/windows_aarch64_msvc/*
+Authors: Microsoft
+License: MIT OR Apache-2.0
+
+------------------------------
+
 Name:    windows_aarch64_msvc
 Files:   vendor/windows_aarch64_msvc/*
 Authors: Microsoft
@@ -255,6 +262,27 @@ License: MIT OR Apache-2.0
 
 Name:    windows_i686_gnu
 Files:   vendor/windows_i686_gnu/*
+Authors: Microsoft
+License: MIT OR Apache-2.0
+
+------------------------------
+
+Name:    windows_i686_gnu
+Files:   vendor/windows_i686_gnu/*
+Authors: Microsoft
+License: MIT OR Apache-2.0
+
+------------------------------
+
+Name:    windows_i686_gnullvm
+Files:   vendor/windows_i686_gnullvm/*
+Authors: Microsoft
+License: MIT OR Apache-2.0
+
+------------------------------
+
+Name:    windows_i686_msvc
+Files:   vendor/windows_i686_msvc/*
 Authors: Microsoft
 License: MIT OR Apache-2.0
 
@@ -274,6 +302,20 @@ License: MIT OR Apache-2.0
 
 ------------------------------
 
+Name:    windows_x86_64_gnu
+Files:   vendor/windows_x86_64_gnu/*
+Authors: Microsoft
+License: MIT OR Apache-2.0
+
+------------------------------
+
+Name:    windows_x86_64_gnullvm
+Files:   vendor/windows_x86_64_gnullvm/*
+Authors: Microsoft
+License: MIT OR Apache-2.0
+
+------------------------------
+
 Name:    windows_x86_64_gnullvm
 Files:   vendor/windows_x86_64_gnullvm/*
 Authors: Microsoft
@@ -283,6 +325,20 @@ License: MIT OR Apache-2.0
 
 Name:    windows_x86_64_msvc
 Files:   vendor/windows_x86_64_msvc/*
+Authors: Microsoft
+License: MIT OR Apache-2.0
+
+------------------------------
+
+Name:    windows_x86_64_msvc
+Files:   vendor/windows_x86_64_msvc/*
+Authors: Microsoft
+License: MIT OR Apache-2.0
+
+------------------------------
+
+Name:    windows-targets
+Files:   vendor/windows-targets/*
 Authors: Microsoft
 License: MIT OR Apache-2.0
 
