@@ -12,4 +12,3 @@ chrono = "0.4.38"
 
 [dev-dependencies]
 extendr-engine = "0.7.0"
-libR-sys = "0.7.0"
