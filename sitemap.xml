@@ -1,30 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://shrektan.github.io/fcl/404.html</loc>
-  </url>
-  <url>
-    <loc>https://shrektan.github.io/fcl/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://shrektan.github.io/fcl/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://shrektan.github.io/fcl/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://shrektan.github.io/fcl/index.html</loc>
-  </url>
-  <url>
-    <loc>https://shrektan.github.io/fcl/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://shrektan.github.io/fcl/reference/fixed_bond.html</loc>
-  </url>
-  <url>
-    <loc>https://shrektan.github.io/fcl/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://shrektan.github.io/fcl/reference/make_rtn.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://shrektan.github.io/fcl/404.html</loc></url>
+<url><loc>https://shrektan.github.io/fcl/LICENSE-text.html</loc></url>
+<url><loc>https://shrektan.github.io/fcl/LICENSE.html</loc></url>
+<url><loc>https://shrektan.github.io/fcl/authors.html</loc></url>
+<url><loc>https://shrektan.github.io/fcl/index.html</loc></url>
+<url><loc>https://shrektan.github.io/fcl/news/index.html</loc></url>
+<url><loc>https://shrektan.github.io/fcl/reference/fixed_bond.html</loc></url>
+<url><loc>https://shrektan.github.io/fcl/reference/index.html</loc></url>
+<url><loc>https://shrektan.github.io/fcl/reference/make_rtn.html</loc></url>
 </urlset>
+
