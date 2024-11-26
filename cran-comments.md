@@ -1,8 +1,8 @@
 # R CMD check results
 
-0 errors | 0 warnings | 2 note
+0 errors | 0 warnings | 1 note
 
-* Added rustc version reporting in the installation log as per CRAN policy.
+* Fix the date handling issue when the date is integer type.
 
 ## Note 1
 
@@ -14,13 +14,3 @@
 The size of the package can't be reduced further as it has to bundle
 all the Rust cates dependencies to avoid the downloading during
 installation issue.
-
-## Note2
-
-* checking CRAN incoming feasibility ... [11s] NOTE
-Maintainer: 'Xianying Tan <shrektan@126.com>'
-
-Days since last update: 0
-
-This recent update is to address CRAN's request to report the rustc version
-in the installation log, as per the policy for Rust packages on CRAN.
