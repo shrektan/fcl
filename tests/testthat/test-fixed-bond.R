@@ -2,16 +2,22 @@ test_that("fixed bond works", {
   bond <- fixed_bond(c("2021-01-01", "2021-02-01"), c("2025-01-01", "2025-02-01"), 100.0, 0.05, 0L)
   expect_equal(bond$len(), 2)
   out <- bond$ytm_dur(c("2022-01-01", "2022-02-01"), 100)
-  expect_equal(as.double(out[1,]), as.double(out[2,]))
+  expect_equal(as.double(out[1, ]), as.double(out[2, ]))
 
   bond <- fixed_bond(c("2021-01-01", "2021-02-01"), c("2025-01-01", "2030-02-01"), 100.0, c(0.05, 0.03), c(0L, 1L))
   out <- bond$ytm_dur(c("2022-01-01", "2022-02-01"), 100)
+
+  # this for test the dates with integer type
+  bond2 <- fixed_bond(structure(c(18628L, 18659L), class = "Date"), structure(c(20089L, 21946L), class = "Date"), 100.0, c(0.05, 0.03), c(0L, 1L))
+  out2 <- bond2$ytm_dur(structure(c(18993L, 19024L), class = "Date"), 100)
+
   expect <- data.frame(
     YTM = c(0.0455272763905981, 0.03),
     MACD = c(3.0, 7.23028295522156),
     MODD = c(2.86936559941372, 7.01969218987131)
   )
   expect_equal(out, expect)
+  expect_equal(out2, expect)
 
   bond <- fixed_bond(c("2026-01-01", "2021-02-01"), c("2025-01-01", "2030-02-01"), c(100.0, 100.0), c(0.05, 0.03), c(0L, 1L))
   out <- bond$cf(c("2026-01-01", "2021-02-01"))
@@ -51,7 +57,8 @@ test_that("fixed_bond returns the same for leap and non-leap year", {
     mty_date = c(210101, 220101),
     redem_value = 100,
     cpn_rate = 0.05,
-    cpn_freq = 1)$ytm_dur(
+    cpn_freq = 1
+  )$ytm_dur(
     ref_date = c(200101, 210101),
     clean_price = 100
   )

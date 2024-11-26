@@ -1,3 +1,7 @@
+# fcl 0.1.3
+
+* Fix the date handling issue when the date is integer type.
+
 # fcl 0.1.2
 
 * Added rustc version reporting in the installation log as per CRAN policy.

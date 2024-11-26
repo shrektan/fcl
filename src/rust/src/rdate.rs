@@ -23,12 +23,14 @@ pub fn robj2date(x: Robj, var: &str) -> Result<Vec<Option<NaiveDate>>> {
             })
             .collect(),
         Rtype::Integers => x
-            .as_integer_slice()
+            .as_integer_vector()
+            .unwrap()
+            .iter()
             .map(|d| {
-                if d[0].is_na() {
+                if d.is_na() {
                     None
                 } else {
-                    NaiveDate::from_num_days_from_ce_opt(d[0] + R_DATE_FROM_CE)
+                    NaiveDate::from_num_days_from_ce_opt(*d + R_DATE_FROM_CE)
                 }
             })
             .into_iter()
