@@ -2,13 +2,14 @@
 name = 'fcl'
 version = '0.1.1'
 edition = '2021'
+rust-version = '1.65'
 
 [lib]
 crate-type = ['staticlib']
 
 [dependencies]
-extendr-api = "0.7.0"
+extendr-api = "0.8.0"
 chrono = "0.4.38"
 
 [dev-dependencies]
-extendr-engine = "0.7.0"
+extendr-engine = "0.8.0"
