@@ -9,6 +9,9 @@ android-tzdata (version 0.1.1):
 autocfg (version 1.1.0):
   Josh Stone
 
+build-print (version 0.1.1):
+  sam0x17
+
 bumpalo (version 3.14.0):
   Nick Fitzgerald
 
@@ -18,7 +21,7 @@ cc (version 1.0.83):
 cfg-if (version 1.0.0):
   Alex Crichton
 
-chrono (version 0.4.38):
+chrono (version 0.4.40):
   Brandon W. Maister
   Dirkjan Ochtman
   Kang Seonghoon
@@ -31,28 +34,41 @@ core-foundation-sys (version 0.8.4):
 ctor (version 0.2.5):
   Matt Mastracci
 
-extendr-api (version 0.7.0):
+extendr-api (version 0.8.0):
   andy-thomason
   Thomas Down
   Mossa Merhi Reimert
+  Josiah Parry
   Claus O. Wilke
   Hiroaki Yutani
   Ilia A. Kosenkov
   Michael Milton
 
-extendr-engine (version 0.7.0):
+extendr-engine (version 0.8.0):
   andy-thomason
   Thomas Down
   Mossa Merhi Reimert
+  Josiah Parry
   Claus O. Wilke
   Hiroaki Yutani
   Ilia A. Kosenkov
   Michael Milton
 
-extendr-macros (version 0.7.0):
+extendr-ffi (version 0.8.0):
   andy-thomason
   Thomas Down
   Mossa Merhi Reimert
+  Josiah Parry
+  Claus O. Wilke
+  Hiroaki Yutani
+  Ilia A. Kosenkov
+  Michael Milton
+
+extendr-macros (version 0.8.0):
+  andy-thomason
+  Thomas Down
+  Mossa Merhi Reimert
+  Josiah Parry
   Claus O. Wilke
   Hiroaki Yutani
   Ilia A. Kosenkov
@@ -72,24 +88,16 @@ js-sys (version 0.3.64):
 libc (version 0.2.149):
   The Rust Project Developers
 
-libR-sys (version 0.7.0):
-  andy-thomason
-  Thomas Down
-  Mossa Merhi Reimert
-  Claus O. Wilke
-  Ilia A. Kosenkov
-  Hiroaki Yutani
-
 log (version 0.4.20):
   The Rust Project Developers
 
 num-traits (version 0.2.17):
   The Rust Project Developers
 
-once_cell (version 1.18.0):
+once_cell (version 1.21.3):
   Aleksey Kladov
 
-paste (version 1.0.14):
+paste (version 1.0.15):
   David Tolnay
 
 proc-macro2 (version 1.0.69):
@@ -123,52 +131,28 @@ wasm-bindgen-shared (version 0.2.87):
 windows (version 0.48.0):
   Microsoft
 
-windows_aarch64_gnullvm (version 0.52.6):
-  Microsoft
-
 windows_aarch64_gnullvm (version 0.48.5):
-  Microsoft
-
-windows_aarch64_msvc (version 0.52.6):
   Microsoft
 
 windows_aarch64_msvc (version 0.48.5):
   Microsoft
 
-windows_i686_gnu (version 0.52.6):
-  Microsoft
-
 windows_i686_gnu (version 0.48.5):
-  Microsoft
-
-windows_i686_gnullvm (version 0.52.6):
-  Microsoft
-
-windows_i686_msvc (version 0.52.6):
   Microsoft
 
 windows_i686_msvc (version 0.48.5):
   Microsoft
 
-windows_x86_64_gnu (version 0.52.6):
-  Microsoft
-
 windows_x86_64_gnu (version 0.48.5):
-  Microsoft
-
-windows_x86_64_gnullvm (version 0.52.6):
   Microsoft
 
 windows_x86_64_gnullvm (version 0.48.5):
   Microsoft
 
-windows_x86_64_msvc (version 0.52.6):
-  Microsoft
-
 windows_x86_64_msvc (version 0.48.5):
   Microsoft
 
-windows-targets (version 0.52.6):
+windows-link (version 0.1.1):
   Microsoft
 
 windows-targets (version 0.48.5):

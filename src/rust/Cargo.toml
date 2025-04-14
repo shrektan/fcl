@@ -1,14 +1,14 @@
 [package]
 name = 'fcl'
-version = '0.1.1'
+version = '0.1.4'
 edition = '2021'
 
 [lib]
 crate-type = ['staticlib']
 
 [dependencies]
-extendr-api = "0.7.0"
-chrono = "0.4.38"
+extendr-api = "0.8.0"
+chrono = "0.4.40"
 
 [dev-dependencies]
-extendr-engine = "0.7.0"
+extendr-engine = "0.8.0"
