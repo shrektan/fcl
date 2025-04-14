@@ -1,3 +1,7 @@
+# fcl 0.1.4
+
+* Fix the calling non-API entry points issue by upgrading the rust crates.
+
 # fcl 0.1.3
 
 * Fix the date handling issue when the date is integer type.
