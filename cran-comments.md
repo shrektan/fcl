@@ -2,7 +2,7 @@
 
 0 errors | 0 warnings | 1 note
 
-* Fix the date handling issue when the date is integer type.
+* Fix the calling non-API entry points issue by upgrading the rust crates.
 
 ## Note 1
 
