@@ -1,2 +1,4 @@
 src/Makevars
 docs
+src/rust/vendor
+src/Makevars.win
