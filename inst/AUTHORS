@@ -1,27 +1,21 @@
 The authors of the dependency Rust crates:
 
-android_system_properties (version 0.1.5):
+android_system_properties (version 0.1.6):
   Nicolas Silva
 
-android-tzdata (version 0.1.1):
-  RumovZ
-
-autocfg (version 1.4.0):
+autocfg (version 1.5.1):
   Josh Stone
 
-build-print (version 0.1.1):
-  sam0x17
-
-bumpalo (version 3.17.0):
+bumpalo (version 3.20.3):
   Nick Fitzgerald
 
-cc (version 1.2.19):
+cc (version 1.4.3):
   Alex Crichton
 
-cfg-if (version 1.0.0):
+cfg-if (version 1.0.4):
   Alex Crichton
 
-chrono (version 0.4.40):
+chrono (version 0.4.45):
   Brandon W. Maister
   Dirkjan Ochtman
   Kang Seonghoon
@@ -31,10 +25,19 @@ chrono (version 0.4.40):
 core-foundation-sys (version 0.8.7):
   The Servo Project Developers
 
-ctor (version 0.2.9):
+ctor (version 0.6.3):
   Matt Mastracci
 
-extendr-api (version 0.8.0):
+ctor-proc-macro (version 0.0.7):
+  Matt Mastracci
+
+dtor (version 0.1.1):
+  Matt Mastracci
+
+dtor-proc-macro (version 0.0.6):
+  Matt Mastracci
+
+extendr-api (version 0.9.0):
   andy-thomason
   Thomas Down
   Mossa Merhi Reimert
@@ -44,7 +47,7 @@ extendr-api (version 0.8.0):
   Ilia A. Kosenkov
   Michael Milton
 
-extendr-engine (version 0.8.0):
+extendr-engine (version 0.9.0):
   andy-thomason
   Thomas Down
   Mossa Merhi Reimert
@@ -54,7 +57,7 @@ extendr-engine (version 0.8.0):
   Ilia A. Kosenkov
   Michael Milton
 
-extendr-ffi (version 0.8.0):
+extendr-ffi (version 0.9.0):
   andy-thomason
   Thomas Down
   Mossa Merhi Reimert
@@ -64,7 +67,7 @@ extendr-ffi (version 0.8.0):
   Ilia A. Kosenkov
   Michael Milton
 
-extendr-macros (version 0.8.0):
+extendr-macros (version 0.9.0):
   andy-thomason
   Thomas Down
   Mossa Merhi Reimert
@@ -74,7 +77,22 @@ extendr-macros (version 0.8.0):
   Ilia A. Kosenkov
   Michael Milton
 
-iana-time-zone (version 0.1.63):
+find-msvc-tools (version 0.1.11):
+  Alex Crichton
+
+futures-core (version 0.3.34):
+  Alex Crichton
+  The Tokio Authors
+
+futures-task (version 0.3.34):
+  Alex Crichton
+  The Tokio Authors
+
+futures-util (version 0.3.34):
+  Alex Crichton
+  The Tokio Authors
+
+iana-time-zone (version 0.1.65):
   Andrew Straw
   René Kijewski
   Ryan Lopopolo
@@ -82,35 +100,44 @@ iana-time-zone (version 0.1.63):
 iana-time-zone-haiku (version 0.1.2):
   René Kijewski
 
-js-sys (version 0.3.77):
+js-sys (version 0.3.104):
   The wasm-bindgen Developers
 
-libc (version 0.2.171):
+lazy_static (version 1.5.0):
+  Marvin Löbel
+
+libc (version 0.2.189):
   The Rust Project Developers
 
-log (version 0.4.27):
+log (version 0.4.33):
   The Rust Project Developers
 
 num-traits (version 0.2.19):
   The Rust Project Developers
 
-once_cell (version 1.21.3):
+once_cell (version 1.21.4):
   Aleksey Kladov
 
 paste (version 1.0.15):
   David Tolnay
 
-proc-macro2 (version 1.0.94):
+pin-project-lite (version 0.2.17):
+  Taiki Endo
+
+proc-macro2 (version 1.0.107):
   David Tolnay
   Alex Crichton
 
-quote (version 1.0.40):
+quote (version 1.0.47):
   David Tolnay
 
-rustversion (version 1.0.20):
+readonly (version 0.2.14):
   David Tolnay
 
-shlex (version 1.3.0):
+rustversion (version 1.0.23):
+  David Tolnay
+
+shlex (version 2.0.1):
   comex
   Fenhl
   Adrian Taylor
@@ -118,41 +145,44 @@ shlex (version 1.3.0):
   Daniel Parks
   Garrett Berg
 
-syn (version 2.0.100):
+slab (version 0.4.12):
+  Carl Lerche
+
+syn (version 3.0.3):
   David Tolnay
 
-unicode-ident (version 1.0.18):
+syn (version 2.0.119):
   David Tolnay
 
-wasm-bindgen (version 0.2.100):
+unicode-ident (version 1.0.24):
+  David Tolnay
+
+wasm-bindgen (version 0.2.127):
   The wasm-bindgen Developers
 
-wasm-bindgen-backend (version 0.2.100):
+wasm-bindgen-macro (version 0.2.127):
   The wasm-bindgen Developers
 
-wasm-bindgen-macro (version 0.2.100):
+wasm-bindgen-macro-support (version 0.2.127):
   The wasm-bindgen Developers
 
-wasm-bindgen-macro-support (version 0.2.100):
+wasm-bindgen-shared (version 0.2.127):
   The wasm-bindgen Developers
 
-wasm-bindgen-shared (version 0.2.100):
-  The wasm-bindgen Developers
-
-windows-core (version 0.61.0):
+windows-core (version 0.62.2):
   Microsoft
 
-windows-implement (version 0.60.0):
+windows-implement (version 0.60.2):
   Microsoft
 
-windows-interface (version 0.59.1):
+windows-interface (version 0.59.3):
   Microsoft
 
-windows-link (version 0.1.1):
+windows-link (version 0.2.1):
   Microsoft
 
-windows-result (version 0.3.2):
+windows-result (version 0.4.1):
   Microsoft
 
-windows-strings (version 0.4.0):
+windows-strings (version 0.5.1):
   Microsoft

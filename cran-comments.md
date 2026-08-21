@@ -2,4 +2,5 @@
 
 0 errors | 0 warnings | 0 note
 
-* Fix the calling non-API entry points issue by upgrading the rust crates.
+* Fix the `R_NamespaceRegistry` non-API entry-point issue reported by CRAN by
+  upgrading the `extendr` Rust crates.

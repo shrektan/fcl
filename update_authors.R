@@ -52,6 +52,31 @@ update_authors <- function() {
     }) |> unname()
     authors <- mapply(\(x1, x2) paste0(c(x1, x2) |> unique(), collapse = ", "), cargo_authors, citation_author)
 
+    # Some crates no longer publish an `authors` field. Keep explicit
+    # fallbacks for those projects so CRAN's bundled-code attribution remains
+    # complete and reviewable.
+    author_fallbacks <- c(
+        "cc" = "Alex Crichton",
+        "extendr-api" = "andy-thomason, Thomas Down, Mossa Merhi Reimert, Josiah Parry, Claus O. Wilke, Hiroaki Yutani, Ilia A. Kosenkov, Michael Milton",
+        "extendr-engine" = "andy-thomason, Thomas Down, Mossa Merhi Reimert, Josiah Parry, Claus O. Wilke, Hiroaki Yutani, Ilia A. Kosenkov, Michael Milton",
+        "extendr-ffi" = "andy-thomason, Thomas Down, Mossa Merhi Reimert, Josiah Parry, Claus O. Wilke, Hiroaki Yutani, Ilia A. Kosenkov, Michael Milton",
+        "extendr-macros" = "andy-thomason, Thomas Down, Mossa Merhi Reimert, Josiah Parry, Claus O. Wilke, Hiroaki Yutani, Ilia A. Kosenkov, Michael Milton",
+        "find-msvc-tools" = "Alex Crichton",
+        "futures-core" = "Alex Crichton, The Tokio Authors",
+        "futures-task" = "Alex Crichton, The Tokio Authors",
+        "futures-util" = "Alex Crichton, The Tokio Authors",
+        "libc" = "The Rust Project Developers",
+        "pin-project-lite" = "Taiki Endo",
+        "windows-core" = "Microsoft",
+        "windows-implement" = "Microsoft",
+        "windows-interface" = "Microsoft",
+        "windows-link" = "Microsoft",
+        "windows-result" = "Microsoft",
+        "windows-strings" = "Microsoft"
+    )
+    missing_authors <- !nzchar(authors)
+    authors[missing_authors] <- unname(author_fallbacks[names[missing_authors]])
+
     licenses <- vapply(l, \(x) x[["license"]], FUN.VALUE = character(1L))
 
     dir.create("inst", showWarnings = FALSE)
@@ -64,7 +89,7 @@ update_authors <- function() {
         paste(x, collapse = "\n  ")
     }, FUN.VALUE = character(1L))
 
-    no_author <- names[!nzchar(authors_flattened)]
+    no_author <- names[!nzchar(authors_flattened) | is.na(authors_flattened)]
     if (length(no_author)) stop(paste0("find no author crates: ", toString(no_author)))
 
     cat(paste(
@@ -98,7 +123,7 @@ the licenses are the same as listed here.
 
     cat(paste(
         "Name:    ", names, "\n",
-        "Files:   vendor/", names, "/*\n",
+        "Files:   vendor/", basename(crates), "/*\n",
         "Authors: ", authors, "\n",
         "License: ", licenses, "\n",
         sep = "",
