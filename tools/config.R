@@ -22,10 +22,10 @@ if (!is_not_cran) {
   message("Building for CRAN.")
 }
 
-# we set cran flags only if NOT_CRAN is empty and if
-# the vendored crates are present.
+# Vendored crates must always be compiled offline. Environment variables used
+# by developer tooling must not allow installation-time downloads.
 .cran_flags <- ifelse(
-  !is_not_cran && vendor_exists,
+  vendor_exists,
   "-j 2 --offline",
   ""
 )
