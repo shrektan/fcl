@@ -1,6 +1,8 @@
 # fcl 0.1.5
 
 * Restore CRAN R C API compliance by upgrading the `extendr` Rust crates.
+* Require Rust 1.71 or later and validate the Rust toolchain during configuration.
+* Build the bundled Rust dependencies offline in a single package-install build.
 
 # fcl 0.1.4
 
