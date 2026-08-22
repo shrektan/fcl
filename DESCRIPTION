@@ -1,6 +1,6 @@
 Package: fcl
 Title: A Financial Calculator
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: c(
     person("Xianying", "Tan", , "shrektan@126.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-6072-3521")),
@@ -23,12 +23,12 @@ Description: A financial calculator that provides very fast implementations
     <https://en.wikipedia.org/wiki/Time-weighted_return>.
 URL: https://github.com/shrektan/fcl, https://shrektan.github.io/fcl/
 BugReports: https://github.com/shrektan/fcl/issues
-SystemRequirements: Cargo (Rust's package manager), rustc
+SystemRequirements: Cargo (Rust's package manager), rustc (>= 1.71.0)
 Biarch: true
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+Config/roxygen2/version: 8.1.0
 Suggests:
     testthat (>= 3.0.0)
 Imports:
@@ -36,5 +36,6 @@ Imports:
     ymd
 Config/testthat/edition: 3
 Config/rextendr/version: 0.3.1.9001
+Config/fcl/MSRV: 1.71.0
 Depends: 
     R (>= 4.2)

@@ -2,16 +2,16 @@
 use chrono::{Datelike, NaiveDate};
 
 fn from_ymd(year: i32, month: u32, day: u32) -> NaiveDate {
-    return NaiveDate::from_ymd_opt(year, month, day).expect("invalid or out-of-range date");
+    NaiveDate::from_ymd_opt(year, month, day).expect("invalid or out-of-range date")
 }
 
 pub fn add_months(ref_date: &NaiveDate, months: i32) -> NaiveDate {
-    let num_of_months = ref_date.year() * 12 + ref_date.month() as i32 + months as i32;
+    let num_of_months = ref_date.year() * 12 + ref_date.month() as i32 + months;
     let year = (num_of_months - 1) / 12;
     let month = (num_of_months - 1) % 12 + 1;
     let since = NaiveDate::signed_duration_since;
     let nxt_month = if month == 12 {
-        from_ymd(year + 1, 1 as u32, 1)
+        from_ymd(year + 1, 1_u32, 1)
     } else {
         from_ymd(year, (month + 1) as u32, 1)
     };

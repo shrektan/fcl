@@ -37,7 +37,7 @@ impl Cashflow {
     }
     fn new() -> Self {
         let data: BTreeMap<NaiveDate, f64> = BTreeMap::new();
-        return Self { data };
+        Self { data }
     }
     pub fn dates(&self) -> Vec<NaiveDate> {
         self.data.keys().cloned().collect()
@@ -53,8 +53,8 @@ impl Cashflow {
             return Self::new();
         }
         let mut data: BTreeMap<NaiveDate, f64> = BTreeMap::new();
-        if price.is_some() {
-            data.insert(*ref_date, -price.unwrap());
+        if let Some(price) = price {
+            data.insert(*ref_date, -price);
         }
         for (k, v) in &self.data {
             if k > ref_date {
@@ -98,14 +98,9 @@ impl FixedBond {
     fn cpn_dates(&self, adjust: bool) -> Vec<NaiveDate> {
         let mut dates: Vec<NaiveDate> = vec![self.value_date];
         let mut ref_date = self.value_date;
-        loop {
-            match self.nxt_cpn_date(&ref_date, adjust) {
-                Some(date) => {
-                    ref_date = date;
-                    dates.push(date);
-                }
-                None => break,
-            }
+        while let Some(date) = self.nxt_cpn_date(&ref_date, adjust) {
+            ref_date = date;
+            dates.push(date);
         }
         dates
     }
@@ -116,7 +111,7 @@ impl FixedBond {
             return None;
         }
         let res = match self.cpn_freq {
-            CpnFreq::Regular(i) => Some(date_handle::add_months(ref_date, 12 / i as i32)),
+            CpnFreq::Regular(i) => Some(date_handle::add_months(ref_date, 12 / i)),
             CpnFreq::Zero => Some(self.mty_date),
         };
         match res {
@@ -157,7 +152,7 @@ impl FixedBond {
             self.cpn_value() / cpn_days as f64 * days as f64
         };
 
-        match cpn_dates.binary_search(&ref_date) {
+        match cpn_dates.binary_search(ref_date) {
             // when ok, it means it's one of the cpn date and the coupon has been paid then should be zero
             Ok(i) => {
                 if eod {
@@ -175,25 +170,20 @@ impl FixedBond {
     pub fn cashflow(&self, cftype: BondCfType) -> Cashflow {
         let mut ref_date = self.nxt_cpn_date(&self.value_date, true);
         let mut res: Cashflow = Cashflow::new();
-        loop {
-            match ref_date {
-                Some(date) => {
-                    let redem: f64 = if date == self.mty_date {
-                        self.redem_value
-                    } else {
-                        0.0
-                    };
-                    let cpn = self.accrued(&date, false);
-                    let value = match cftype {
-                        BondCfType::Coupon => cpn,
-                        BondCfType::Redem => redem,
-                        BondCfType::All => cpn + redem,
-                    };
-                    res.data.insert(date, value);
-                    ref_date = self.nxt_cpn_date(&date, true);
-                }
-                None => break,
-            }
+        while let Some(date) = ref_date {
+            let redem: f64 = if date == self.mty_date {
+                self.redem_value
+            } else {
+                0.0
+            };
+            let cpn = self.accrued(&date, false);
+            let value = match cftype {
+                BondCfType::Coupon => cpn,
+                BondCfType::Redem => redem,
+                BondCfType::All => cpn + redem,
+            };
+            res.data.insert(date, value);
+            ref_date = self.nxt_cpn_date(&date, true);
         }
         res
     }
@@ -223,11 +213,11 @@ impl FixedBond {
                 .keys()
                 .map(|date: &NaiveDate| date_handle::year_frac(date, ref_date))
                 .collect();
-            let macd = &years
+            let macd = years
                 .iter()
                 .zip(&cfs)
                 .map(|(t, cf)| cf * t * (1.0 + ytm).powf(-t))
-                .sum()
+                .sum::<f64>()
                 / dirty_price;
             macd
         };
@@ -252,13 +242,12 @@ mod tests {
         round(x, Some(2))
     }
     fn from_ymd(year: i32, month: u32, day: u32) -> NaiveDate {
-        return NaiveDate::from_ymd_opt(year, month, day).expect("invalid or out-of-range date");
+        NaiveDate::from_ymd_opt(year, month, day).expect("invalid or out-of-range date")
     }
     #[test]
     fn dirty_price() {
         fn from_ymd(year: i32, month: u32, day: u32) -> NaiveDate {
-            return NaiveDate::from_ymd_opt(year, month, day)
-                .expect("invalid or out-of-range date");
+            NaiveDate::from_ymd_opt(year, month, day).expect("invalid or out-of-range date")
         }
         let mut bond =
             FixedBond::new(from_ymd(2010, 1, 1), from_ymd(2015, 1, 1), 100.0, 0.05, 2).unwrap();

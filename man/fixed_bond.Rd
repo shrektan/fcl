@@ -19,7 +19,7 @@ it returns an environment containing the following objects:
 \item \code{len()}: a function returns the length of the internal bonds object.
 \item \code{ytm_dur(ref_date, clean_price)}: a function returns a data.frame, with three columns,
 'YTM' (Yield to Maturity), 'MODD' (Modified Duration) and 'MACD' (Macaulay Duration).
-\item \code{cf(ref_date)}: a function returns the schedualed bond cashflows, in \code{xts} format.
+\item \code{cf(ref_date)}: a function that returns the scheduled bond cash flows, in \code{xts} format.
 }
 }
 \description{
@@ -33,15 +33,15 @@ Create Fixed Bond Object
 
 \itemize{
 \item It doesn't take the day count convention into account for now.
-\item There's no support for business day calendar. The dates in the cashflow projection are the
+\item There's no support for business day calendar. The dates in the cash flow projection are the
 same days in the next few months (see \code{\link[ymd:edate]{ymd::edate()}}). It considers different days in each
 month but no weekend date adjustment.
-\item The 'YTM' value is the cashflow's 'IRR' (internal rate of return) value. Thus, it doesn't
-equal to the Excel's Yield value, which is adjusted using this formula
+\item The 'YTM' value is the cash flow's 'IRR' (internal rate of return) value. Thus, it doesn't
+equal to the Yield value returned by Excel, which is adjusted using this formula
 \eqn{YTM (fcl) = (1 + frac{Yield (Excel)}{n})^n - 1},
-where n is the the coupon payment frequency, when the remaining life of the bond is larger
+where n is the coupon payment frequency, when the remaining life of the bond is larger
 than 1.
-\item When the bond is going to mature within one year, the \eqn{Yield (Excel) = frac{Cashflow}{Price} - 1}.
+\item When the bond is going to mature within one year, the \eqn{Yield (Excel) = frac{Cash flow}{Price} - 1}.
 }
 }
 \examples{

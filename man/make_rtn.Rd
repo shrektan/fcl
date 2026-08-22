@@ -21,13 +21,13 @@ with one column.
 \item \code{twrr_cr}: the cumulative Time-weighted Return
 \item \code{twrr_dr}: the daily Time-weighted Return
 \item \code{dietz}: the Modified Dietz Return
-\item \code{dietz_avc}: the denominator used to calculate the 'Modifie Dietz Return
+\item \code{dietz_avc}: the denominator used to calculate the Modified Dietz Return
 \item \code{cum_pl}: the cumulative PnL
 }
 }
 \description{
 By providing a "group" (\code{ids}) of \code{dates}, \code{mvs} and \code{pls},
-calucating the Time-weighted Rate of Return (TWRR) or Modified
+calculating the Time-weighted Rate of Return (TWRR) or Modified
 Dietz Rate of Return (DIETZ).
 }
 \note{

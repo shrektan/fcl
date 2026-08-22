@@ -16,20 +16,17 @@ VENDOR_DIR = $(CURDIR)/vendor
 # RUSTFLAGS appends --print=native-static-libs to ensure that 
 # the correct linkers are used. Use this for debugging if need. 
 #
-# CRAN note: Cargo and Rustc versions are reported during
-# configure via tools/msrv.R.
+# CRAN note: Cargo and rustc versions are reported during
+# configure via tools/configure.R.
 #
-# When the NOT_CRAN flag is *not* set, the vendor.tar.xz, if present,
-# is unzipped and used for offline compilation.
+# If vendor.tar.xz is present, unpack it and invoke cargo with --offline
+# so installation never downloads crates.
 $(STATLIB):
 
-	# Check if NOT_CRAN is false and unzip vendor.tar.xz if so
-	if [ "$(NOT_CRAN)" != "true" ]; then \
-		if [ -f ./rust/vendor.tar.xz ]; then \
-			tar xf rust/vendor.tar.xz && \
-			mkdir -p $(CARGOTMP) && \
-			cp rust/vendor-config.toml $(CARGOTMP)/config.toml; \
-		fi; \
+	if [ -f ./rust/vendor.tar.xz ]; then \
+		tar xf rust/vendor.tar.xz && \
+		mkdir -p $(CARGOTMP) && \
+		cp rust/vendor-config.toml $(CARGOTMP)/config.toml; \
 	fi
 
 	export CARGO_HOME=$(CARGOTMP) && \

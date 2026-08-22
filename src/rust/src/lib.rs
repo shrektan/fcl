@@ -1,5 +1,6 @@
 use chrono::NaiveDate;
 use extendr_api::prelude::*;
+#[cfg(test)]
 mod assert;
 mod bond;
 mod check_len;
@@ -37,8 +38,8 @@ impl RFixedBond {
         let cpn_freq = cpn_freq.as_integer_slice().expect("cpn_freq must be int");
         let mut out: Vec<Option<bond::FixedBond>> = Vec::new();
         for i in 0..n {
-            if value_date[i] == None
-                || mty_date[i] == None
+            if value_date[i].is_none()
+                || mty_date[i].is_none()
                 || redem_value[i].is_na()
                 || cpn_rate[i].is_na()
                 || cpn_freq[i].is_na()
@@ -52,11 +53,7 @@ impl RFixedBond {
                     cpn_rate[i],
                     cpn_freq[i],
                 );
-                if bond.is_ok() {
-                    out.push(Some(bond.unwrap()));
-                } else {
-                    out.push(None);
-                }
+                out.push(bond.ok());
             }
         }
         RFixedBond { bonds: out }
@@ -126,20 +123,17 @@ impl RFixedBond {
             if ref_date[i].is_none() {
                 continue;
             }
-            match bond {
-                Some(value) => {
-                    let cf = value
-                        .cashflow(bond::BondCfType::Coupon)
-                        .cf(&ref_date[i].unwrap(), None);
-                    cpns.append(&mut cf.values());
-                    let cf = value
-                        .cashflow(bond::BondCfType::Redem)
-                        .cf(&ref_date[i].unwrap(), None);
-                    redems.append(&mut cf.values());
-                    dates.append(&mut cf.dates());
-                    ids.append(&mut vec![i as i32 + 1; cf.len()]);
-                }
-                None => {}
+            if let Some(value) = bond {
+                let cf = value
+                    .cashflow(bond::BondCfType::Coupon)
+                    .cf(&ref_date[i].unwrap(), None);
+                cpns.append(&mut cf.values());
+                let cf = value
+                    .cashflow(bond::BondCfType::Redem)
+                    .cf(&ref_date[i].unwrap(), None);
+                redems.append(&mut cf.values());
+                dates.append(&mut cf.dates());
+                ids.append(&mut vec![i as i32 + 1; cf.len()]);
             }
         }
         data_frame!(
@@ -200,7 +194,7 @@ impl RRtn {
         for (id, val) in raw.iter() {
             data.insert(*id, val.to_rtn());
         }
-        RRtn { data: data }
+        RRtn { data }
     }
     fn twrr_cr(&self, from: f64, to: f64, id: i32) -> Vec<Option<f64>> {
         let from = from as i32;

@@ -4,7 +4,7 @@
 #' Create a Return Object
 #'
 #' By providing a "group" (`ids`) of `dates`, `mvs` and `pls`,
-#' calucating the Time-weighted Rate of Return (TWRR) or Modified
+#' calculating the Time-weighted Rate of Return (TWRR) or Modified
 #' Dietz Rate of Return (DIETZ).
 #'
 #' @param date a Date vector, the reference date of each row
@@ -31,7 +31,7 @@
 #'   * `twrr_cr`: the cumulative Time-weighted Return
 #'   * `twrr_dr`: the daily Time-weighted Return
 #'   * `dietz`: the Modified Dietz Return
-#'   * `dietz_avc`: the denominator used to calculate the 'Modifie Dietz Return
+#'   * `dietz_avc`: the denominator used to calculate the Modified Dietz Return
 #'   * `cum_pl`: the cumulative PnL
 #' @examples
 #' rtn <- make_rtn(date = c(210101, 210105, 210110), mv = c(100, 123, 140), pl = c(0, 3, 7))
