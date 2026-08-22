@@ -1,6 +1,3 @@
-# check the packages MSRV first
-source("tools/msrv.R")
-
 # check DEBUG and NOT_CRAN environment variables
 env_debug <- Sys.getenv("DEBUG")
 env_not_cran <- Sys.getenv("NOT_CRAN")

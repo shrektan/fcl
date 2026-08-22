@@ -2,7 +2,7 @@
 #
 # Config/<package name>/MSRV (optional):
 #   Minimum Supported Rust version (e.g. 1.41.0). If this is specified, errors
-#   when the installed cargo is newer than the requirement.
+#   when the installed Rust compiler is older than the requirement.
 
 SYSINFO_OS <- tolower(Sys.info()[["sysname"]])
 SYSINFO_MACHINE <- Sys.info()[["machine"]]
@@ -63,44 +63,47 @@ safe_system2 <- function(cmd, args) {
   result
 }
 
-# check_cargo -------------------------------------------------------------
+# check_rust_toolchain ----------------------------------------------------
 
-#' Check if the cargo command exists and the version is above the requirements
+#' Check if cargo and rustc exist and rustc meets the version requirement
 #'
 #' @return
 #'   `TRUE` invisibly if no error was found.
-check_cargo <- function() {
-  ### Check if cargo command works without error ###
+check_rust_toolchain <- function() {
+  ### Check if cargo and rustc work without error ###
 
-  cat("*** Checking if cargo is installed\n")
+  cat("*** Checking if cargo and rustc are installed\n")
 
-  cargo_cmd <- "cargo"
-  cargo_args <- "version"
+  res_cargo <- safe_system2("cargo", "version")
 
-  res_version <- safe_system2(cargo_cmd, cargo_args)
-
-  if (!isTRUE(res_version$success)) {
+  if (!isTRUE(res_cargo$success)) {
     stop(errorCondition("cargo command is not available", class = c("error_cargo_check", "error")))
   }
 
-  ### Check the version ###
+  res_rustc <- safe_system2("rustc", "--version")
+
+  if (!isTRUE(res_rustc$success)) {
+    stop(errorCondition("rustc command is not available", class = c("error_cargo_check", "error")))
+  }
+
+  ### Check the compiler version ###
 
   msrv <- get_desc_field("MSRV", optional = TRUE)
 
   if (isTRUE(!is.na(msrv))) {
-    cat("*** Checking if cargo is newer than the required version\n")
+    cat("*** Checking if rustc is new enough\n")
 
-    version <- res_version$output
+    version <- res_rustc$output
 
-    ptn <- "cargo\\s+(\\d+\\.\\d+\\.\\d+)"
+    ptn <- "rustc\\s+(\\d+\\.\\d+\\.\\d+)"
     m <- regmatches(version, regexec(ptn, version))[[1]]
 
     if (length(m) != 2) {
-      stop(errorCondition("cargo version returned unexpected result", class = c("error_cargo_check", "error")))
+      stop(errorCondition("rustc version returned unexpected result", class = c("error_cargo_check", "error")))
     }
 
     if (package_version(m[2]) < package_version(msrv)) {
-      msg <- sprintf("The installed version of cargo (%s) is older than the requirement (%s)", m[2], msrv)
+      msg <- sprintf("The installed version of rustc (%s) is older than the requirement (%s)", m[2], msrv)
       stop(errorCondition(msg, class = c("error_cargo_check", "error")))
     }
   }
@@ -132,7 +135,7 @@ check_cargo <- function() {
 ### Check cargo toolchain ###
 
 cargo_check_result <- tryCatch(
-  check_cargo(),
+  check_rust_toolchain(),
   # Defer errors if it's raised by functions here
   error_cargo_check = function(e) e$message
 )
@@ -141,14 +144,14 @@ cargo_check_result <- tryCatch(
 # or too old, it's not the end of the world. There might be a pre-compiled
 # binary available for the platform.
 if (isTRUE(cargo_check_result)) {
-  cat("*** cargo is ok\n")
+  cat("*** Rust toolchain is ok\n")
   quit("no", status = 0)
 }
 
 cat(sprintf("
 -------------- ERROR: CONFIGURATION FAILED --------------------
 
-[cargo check result]
+[Rust toolchain check result]
 %s
 
 Please refer to <https://www.rust-lang.org/tools/install> to install Rust.
