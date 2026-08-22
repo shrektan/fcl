@@ -108,6 +108,9 @@ check_rust_toolchain <- function() {
     }
   }
 
+  cat(sprintf("*** %s\n", res_cargo$output))
+  cat(sprintf("*** %s\n", res_rustc$output))
+
   ### Check the targets ###
 
   if (identical(SYSINFO_OS, "windows")) {
