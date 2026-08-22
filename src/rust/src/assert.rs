@@ -8,11 +8,7 @@ impl NearEq for f64 {
     fn near_equal(&self, r: &Self) -> bool {
         let l = &self;
         // l or r could be NaN or infinite
-        if l.classify() != r.classify() || (*l - *r).abs() > f64::EPSILON.sqrt() {
-            false
-        } else {
-            true
-        }
+        !(l.classify() != r.classify() || (*l - *r).abs() > f64::EPSILON.sqrt())
     }
 }
 

@@ -48,7 +48,7 @@ pub fn calculate_xnpv(rate: f64, cf: &CheckedCashflowSchedule) -> f64 {
     cf.values
         .iter()
         .zip(cf.dates.iter())
-        .map(|(v, d)| v / f64::powf(1. + rate, date_handle::year_frac(d, &d0)))
+        .map(|(v, d)| v / f64::powf(1. + rate, date_handle::year_frac(d, d0)))
         .sum()
 }
 
@@ -73,7 +73,7 @@ mod tests {
     use crate::assert::NearEq;
     use chrono::{Duration, NaiveDate};
     fn from_ymd(year: i32, month: u32, day: u32) -> NaiveDate {
-        return NaiveDate::from_ymd_opt(year, month, day).expect("invalid or out-of-range date");
+        NaiveDate::from_ymd_opt(year, month, day).expect("invalid or out-of-range date")
     }
     #[test]
     fn xnpv_with_zero_rate() {
@@ -82,12 +82,10 @@ mod tests {
         let dates0: [NaiveDate; 10000] = [somedate; 10000];
         let mut dates: [NaiveDate; 10000] = [somedate; 10000];
 
-        let mut i = 0;
-        for d in dates0.iter() {
+        for (i, d) in dates0.iter().enumerate() {
             dates[i] = d
                 .checked_add_signed(Duration::weeks(52 * (i as i64)))
                 .unwrap();
-            i = i + 1;
         }
 
         assert_eq!(xnpv(0., &cf, &dates).unwrap(), cf.iter().sum::<f64>());

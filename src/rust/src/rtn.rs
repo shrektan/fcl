@@ -13,7 +13,7 @@ impl Rtn {
         check_len!(dates, mvs, pls);
         let mut data: BTreeMap<RDate, (f64, f64)> = BTreeMap::new();
         for (i, date) in dates.iter().enumerate() {
-            if data.contains_key(&date) {
+            if data.contains_key(date) {
                 return Err("dates contain duplicate".to_string());
             }
             data.insert(*date, (mvs[i], pls[i]));
@@ -65,27 +65,22 @@ impl Rtn {
             _ => None,
         }
     }
-    fn crs(drs: &Vec<Option<f64>>) -> Vec<Option<f64>> {
+    fn crs(drs: &[Option<f64>]) -> Vec<Option<f64>> {
         let mut out: Vec<Option<f64>> = Vec::with_capacity(drs.len());
         for (i, dr) in drs.iter().enumerate() {
             let v = if i == 0 {
                 *dr
+            } else if dr.is_none() || out[i - 1].is_none() {
+                None
             } else {
-                if dr.is_none() || out[i - 1].is_none() {
-                    None
-                } else {
-                    Some((out[i - 1].unwrap() + 1.) * (dr.unwrap() + 1.) - 1.)
-                }
+                Some((out[i - 1].unwrap() + 1.) * (dr.unwrap() + 1.) - 1.)
             };
             out.push(v);
         }
         out
     }
     fn i(&self, date: RDate) -> Option<usize> {
-        match self.dates.binary_search(&date) {
-            Ok(k) => Some(k),
-            Err(_) => None,
-        }
+        self.dates.binary_search(&date).ok()
     }
     pub fn dates(from: RDate, to: RDate) -> Result<Vec<RDate>, String> {
         if from > to {
@@ -144,22 +139,13 @@ impl Rtn {
         let out: Vec<Option<f64>> = i_dates
             .iter()
             .enumerate()
-            .map(|(i, _)| match Self::weighted_cf(&i_dates, &cfs, i) {
-                Some(v) => Some(v + mv0),
-                None => None,
-            })
+            .map(|(i, _)| Self::weighted_cf(&i_dates, &cfs, i).map(|v| v + mv0))
             .collect();
         Ok(out)
     }
     pub fn cum_pl(&self, from: RDate, to: RDate) -> Result<Vec<Option<f64>>, String> {
         let i_dates = self.i_dates(from, to)?;
-        let pls: Vec<Option<f64>> = i_dates
-            .iter()
-            .map(|i| match self.pl(*i) {
-                Some(v) => Some(*v),
-                None => None,
-            })
-            .collect();
+        let pls: Vec<Option<f64>> = i_dates.iter().map(|i| self.pl(*i).copied()).collect();
         let mut cum_pls: Vec<Option<f64>> = Vec::with_capacity(pls.len());
         for (i, pl) in pls.iter().enumerate() {
             if i == 0 {
