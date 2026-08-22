@@ -70,6 +70,15 @@ safe_system2 <- function(cmd, args) {
 #' @return
 #'   `TRUE` invisibly if no error was found.
 check_rust_toolchain <- function() {
+  ### Discover rustup's default binary dir before probing PATH ###
+  # GUI / RStudio sessions often do not inherit ~/.cargo/bin from the shell.
+  # Makevars still appends that directory later; the preflight must too.
+  cargo_home <- Sys.getenv("CARGO_HOME", unset = file.path(path.expand("~"), ".cargo"))
+  rust_bin <- file.path(cargo_home, "bin")
+  if (dir.exists(rust_bin)) {
+    Sys.setenv(PATH = paste(rust_bin, Sys.getenv("PATH"), sep = .Platform$path.sep))
+  }
+
   ### Check if cargo and rustc work without error ###
 
   cat("*** Checking if cargo and rustc are installed\n")
@@ -143,9 +152,9 @@ cargo_check_result <- tryCatch(
   error_cargo_check = function(e) e$message
 )
 
-# If cargo is confirmed fine, exit here. But, even if the cargo is not available
-# or too old, it's not the end of the world. There might be a pre-compiled
-# binary available for the platform.
+# This package has no pre-compiled binary fallback. A missing or too-old
+# toolchain must fail configure so installation does not proceed offline
+# without cargo/rustc.
 if (isTRUE(cargo_check_result)) {
   cat("*** Rust toolchain is ok\n")
   quit("no", status = 0)
