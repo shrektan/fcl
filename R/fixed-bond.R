@@ -20,9 +20,9 @@
 #'     same days in the next few months (see [ymd::edate()]). It considers different days in each
 #'     month but no weekend date adjustment.
 #'   * The 'YTM' value is the cash flow's 'IRR' (internal rate of return) value. Thus, it doesn't
-#'     equal to the Excel's Yield value, which is adjusted using this formula
+#'     equal to the Yield value returned by Excel, which is adjusted using this formula
 #'     \eqn{YTM (fcl) = (1 + frac{Yield (Excel)}{n})^n - 1},
-#'     where n is the the coupon payment frequency, when the remaining life of the bond is larger
+#'     where n is the coupon payment frequency, when the remaining life of the bond is larger
 #'     than 1.
 #'   * When the bond is going to mature within one year, the \eqn{Yield (Excel) = frac{Cash flow}{Price} - 1}.
 #' @examples
