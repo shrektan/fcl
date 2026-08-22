@@ -1,5 +1,6 @@
 use chrono::NaiveDate;
 use extendr_api::prelude::*;
+#[cfg(test)]
 mod assert;
 mod bond;
 mod check_len;
