@@ -133,8 +133,9 @@ check_rust_toolchain <- function() {
       return(invisible(TRUE))
     }
 
-    if (!isTRUE("x86_64-pc-windows-gnu" %in% targets$output)) {
-      msg <- "The required target x86_64-pc-windows-gnu is not installed"
+    target <- if (grepl("aarch", R.version$platform)) "aarch64-pc-windows-gnullvm" else "x86_64-pc-windows-gnu"
+    if (!isTRUE(target %in% targets$output)) {
+      msg <- paste("The required target", target, "is not installed")
       stop(errorCondition(msg, class = c("error_cargo_check", "error")))
     }
   }
