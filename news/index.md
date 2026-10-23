@@ -2,6 +2,8 @@
 
 ## fcl 0.1.5
 
+CRAN release: 2026-08-22
+
 - Restore CRAN R C API compliance by upgrading the `extendr` Rust
   crates.
 - Require Rust 1.71 or later and validate the Rust toolchain during
